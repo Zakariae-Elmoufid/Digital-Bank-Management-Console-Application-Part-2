@@ -11,5 +11,5 @@ public interface ClientInterface {
     public Client create(String firstName, String lastName, String email, BigDecimal salary, String address, String cin);
     public List<Client> getAll();
     public boolean update(int id , Map<String, Object> data);
-
+    public boolean close(int id);
 }

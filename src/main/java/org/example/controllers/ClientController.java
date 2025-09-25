@@ -86,14 +86,20 @@ public class ClientController {
 
     }
 
-    public void  viewClient() {
-
-
-    }
-
     public void viewAllClients() {
       List<Client> clients =  this.clientService.getAllClients();
       clients.stream().forEach(System.out::println);
 
+    }
+
+    public void closeClient() {
+        this.viewAllClients();
+        int id = InputValidator.getInt("Enter ID to colse");
+        boolean isClose =  this.clientService.closeCline(id);
+        if(isClose){
+            System.out.println("Client closed successfully");
+        }else{
+            System.out.println("Client not closed");
+        }
     }
 }

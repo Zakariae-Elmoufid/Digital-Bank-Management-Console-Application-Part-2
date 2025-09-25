@@ -33,6 +33,10 @@ public class ClientService {
          return this.clientRepository.update(id,data);
     }
 
+    public boolean closeCline(int id){
+        return this.clientRepository.close(id);
+    }
+
 
 
 }

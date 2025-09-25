@@ -23,9 +23,12 @@ public class MainMenu {
         System.out.println("============menu============");
         System.out.println("1. add new client");
         System.out.println("2. update info client");
-        System.out.println("3. view client");
-        System.out.println("4. view all clients");
-        System.out.println("5. exit");
+        System.out.println("3. view all clients");
+        System.out.println("4. close client");
+        System.out.println("5. Create account ");
+        System.out.println("6. List my accounts");
+        System.out.println("7. Close account");
+        System.out.println(". exit");
 
         System.out.println();
         int choice = 0;
@@ -43,13 +46,15 @@ public class MainMenu {
                         clientController.updateCleint();
                         break;
                     case 3:
-                        clientController.viewClient();
-                        break;
-                    case 4:
                         clientController.viewAllClients();
                         break;
+                    case 4:
+                        clientController.closeClient();
+                        break;
+                    case 5:
+
                     default:
-                        System.out.println("Invalid choice , please choise just between 1 and 4");
+                        System.out.println("Invalid choice , please choise just between 1 and 3");
                         isValid = false;
                         break;
                 }
