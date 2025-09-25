@@ -10,7 +10,6 @@ import java.sql.Statement;
 import org.example.util.Session;
 
 public class UserRepository extends BaseRepository implements UserInterface {
-   private Session session = Session.getInstance();
     public User findUser(String email,String  password){
        String query = "SELECT * FROM users WHERE email = ? AND password = ?";
        try (PreparedStatement stmt = conn().prepareStatement(query)) {
@@ -26,9 +25,6 @@ public class UserRepository extends BaseRepository implements UserInterface {
                            rs.getBoolean("is_active"),
                            rs.getInt("role_id")
                    );
-                   session.setSession("email",user.getEmail());
-                   session.setSession("id",user.getId());
-                   session.setSession("password",user.getPassword());
                    return user;
                }
            }

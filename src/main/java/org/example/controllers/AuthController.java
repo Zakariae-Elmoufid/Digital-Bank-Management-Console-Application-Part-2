@@ -4,14 +4,15 @@ package org.example.controllers;
 import org.example.models.User;
 import org.example.services.AuthService;
 import org.example.util.Session;
+import org.example.views.MainMenu;
 
-import javax.swing.plaf.PanelUI;
 import java.util.Scanner;
 
 public class AuthController {
 
       private AuthService authService;
       private Session session = Session.getInstance();
+      private MainMenu mainMenu = new MainMenu();
 
       public AuthController(AuthService authService) {
           this.authService = authService;
@@ -21,6 +22,8 @@ public class AuthController {
       Scanner sc = new Scanner(System.in);
 
       public  void findUser(){
+
+
           boolean NoValid = false;
           String email;
           String password;
@@ -44,8 +47,21 @@ public class AuthController {
 
            User user = this.authService.findUserByEmailAndPassword(email,password);
            if(user!= null){
-               System.out.println("You have successfully logged in" + session.getSession("email"));
-
+                   switch (user.getRoleId()){
+                       case 1:
+                           System.out.println("Admin");
+                           break;
+                       case 2:
+                           System.out.println("TELLER");
+                            mainMenu.menuTeller(session.getSession("username"));
+                           break;
+                       case 3:
+                           System.out.println("AUDITOR");
+                           break;
+                       case 4:
+                           System.out.println("Manager");
+                           break;
+                   }
            }else{
                System.out.println("You have not successfully logged in" );
            }
