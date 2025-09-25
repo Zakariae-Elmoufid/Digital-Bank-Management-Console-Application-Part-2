@@ -69,7 +69,8 @@ CREATE TABLE clients (
                          salary DECIMAL(15,2),
                          cin VARCHAR(20),
                          is_active BOOLEAN DEFAULT true,
-                         address TEXT
+                         address TEXT,
+                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ;
 
 CREATE TABLE accounts (

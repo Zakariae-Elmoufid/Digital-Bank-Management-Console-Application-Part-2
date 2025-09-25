@@ -64,6 +64,8 @@ public class AuthController {
                    }
            }else{
                System.out.println("You have not successfully logged in" );
+               System.out.println("Please try again");
+               findUser();
            }
 
       }

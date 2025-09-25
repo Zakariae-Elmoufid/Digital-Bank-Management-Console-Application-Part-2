@@ -3,6 +3,7 @@ package org.example.views;
 import org.example.controllers.ClientController;
 import org.example.repositories.ClientRepository;
 import org.example.services.ClientService;
+import org.example.util.InputValidator;
 
 import java.awt.*;
 import java.util.InputMismatchException;
@@ -26,13 +27,13 @@ public class MainMenu {
         System.out.println("4. view all clients");
         System.out.println("5. exit");
 
-        System.out.println("write what number would you like to do?");
+        System.out.println();
         int choice = 0;
         boolean isValid = false;
 
         do{
             try {
-                choice = sc.nextInt();
+                choice = InputValidator.getInt("write what number would you like to do?");
                 isValid = true;
                 switch (choice) {
                     case 1:
