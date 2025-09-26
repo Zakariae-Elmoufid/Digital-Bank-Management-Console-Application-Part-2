@@ -1,7 +1,10 @@
 package org.example.views;
 
+import org.example.controllers.AccountController;
 import org.example.controllers.ClientController;
+import org.example.repositories.AccountRepository;
 import org.example.repositories.ClientRepository;
+import org.example.services.AccountService;
 import org.example.services.ClientService;
 import org.example.util.InputValidator;
 
@@ -15,6 +18,9 @@ public class MainMenu {
     private ClientRepository clientRepository = new ClientRepository();
     private ClientService clientService = new ClientService(clientRepository);
     private ClientController clientController = new ClientController(clientService);
+    private AccountRepository accountRepository = new  AccountRepository();
+    private AccountService accountService = new AccountService(accountRepository);
+    private AccountController accountController = new AccountController(accountService, clientService);
 
     public void menuTeller(String username){
         System.out.println("===========================");
@@ -52,7 +58,8 @@ public class MainMenu {
                         clientController.closeClient();
                         break;
                     case 5:
-
+                        accountController.createAccount();
+                        break;
                     default:
                         System.out.println("Invalid choice , please choise just between 1 and 3");
                         isValid = false;

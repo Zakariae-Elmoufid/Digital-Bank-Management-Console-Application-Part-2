@@ -85,7 +85,7 @@ public class ClientRepository  extends BaseRepository implements ClientInterface
    public boolean close(int id){
        String query = "update clients set is_active = ? where id=?";
        try(PreparedStatement stmt = conn().prepareStatement(query)){
-           stmt.setBoolean(1,flase);
+           stmt.setBoolean(1,false);
            stmt.setInt(2,id);
            int row  = stmt.executeUpdate();
            if (row > 0) {

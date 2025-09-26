@@ -19,6 +19,8 @@ public class ClientController {
     public ClientController(ClientService clientService){
         this.clientService = clientService;
     }
+    public ClientController(){
+    }
 
     public void addClient() {
         System.out.println("====here ! your create new client");
@@ -89,7 +91,6 @@ public class ClientController {
     public void viewAllClients() {
       List<Client> clients =  this.clientService.getAllClients();
       clients.stream().forEach(System.out::println);
-
     }
 
     public void closeClient() {

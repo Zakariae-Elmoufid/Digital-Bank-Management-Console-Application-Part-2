@@ -24,10 +24,11 @@ public class AuthController {
       public  void findUser(){
 
 
-          boolean NoValid = false;
+          boolean NoValid;
           String email;
           String password;
           do {
+              NoValid = false;
           System.out.println("Enter your Email");
            email = sc.next();
           System.out.println("Enter your Password");
