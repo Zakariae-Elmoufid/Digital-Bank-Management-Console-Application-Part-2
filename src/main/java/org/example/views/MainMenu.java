@@ -1,7 +1,10 @@
 package org.example.views;
 
+import org.example.controllers.AccountController;
 import org.example.controllers.ClientController;
+import org.example.repositories.AccountRepository;
 import org.example.repositories.ClientRepository;
+import org.example.services.AccountService;
 import org.example.services.ClientService;
 import org.example.util.InputValidator;
 
@@ -15,10 +18,13 @@ public class MainMenu {
     private ClientRepository clientRepository = new ClientRepository();
     private ClientService clientService = new ClientService(clientRepository);
     private ClientController clientController = new ClientController(clientService);
+    private AccountRepository accountRepository = new  AccountRepository();
+    private AccountService accountService = new AccountService(accountRepository);
+    private AccountController accountController = new AccountController(accountService, clientService);
 
-    public void menuTeller(String username){
+    public void menuTeller(){
         System.out.println("===========================");
-        System.out.println("Welcome to Teller " + username);
+        System.out.println("Welcome to Teller ");
         System.out.println("============================");
         System.out.println("============menu============");
         System.out.println("1. add new client");
@@ -26,7 +32,7 @@ public class MainMenu {
         System.out.println("3. view all clients");
         System.out.println("4. close client");
         System.out.println("5. Create account ");
-        System.out.println("6. List my accounts");
+        System.out.println("6. List all accounts");
         System.out.println("7. Close account");
         System.out.println(". exit");
 
@@ -52,7 +58,14 @@ public class MainMenu {
                         clientController.closeClient();
                         break;
                     case 5:
-
+                        accountController.createAccount();
+                        break;
+                    case 6:
+                        accountController.listAllAccount();
+                        break;
+                    case 7:
+                        accountController.closeAccount();
+                        break;
                     default:
                         System.out.println("Invalid choice , please choise just between 1 and 3");
                         isValid = false;

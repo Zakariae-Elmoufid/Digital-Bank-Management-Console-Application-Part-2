@@ -1,8 +1,11 @@
 package org.example.services;
 
+import org.example.models.Account;
 import org.example.models.User;
 import org.example.repositories.UserRepository;
 import org.example.util.Session;
+
+import java.util.List;
 
 public class AuthService {
 
@@ -24,7 +27,10 @@ public class AuthService {
             return user;
           }
             return null;
-
     }
+
+
+
+
 
 }

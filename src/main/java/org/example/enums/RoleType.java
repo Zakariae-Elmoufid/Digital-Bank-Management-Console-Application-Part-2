@@ -4,6 +4,5 @@ public enum RoleType {
      ADMIN,
     AUDITOR,
     MANAGER,
-    TELLER,
-    CLIENT
+    TELLER
 }

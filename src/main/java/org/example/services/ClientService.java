@@ -33,8 +33,15 @@ public class ClientService {
          return this.clientRepository.update(id,data);
     }
 
-    public boolean closeCline(int id){
-        return this.clientRepository.close(id);
+    public String closeCline(int id){
+        List<Client> clients = this.clientRepository.getAll();
+
+        Client client = clients.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
+        if(client ==null) return "client not found";
+
+        this.clientRepository.close(id);
+        return "request close has been successfully";
+
     }
 
 

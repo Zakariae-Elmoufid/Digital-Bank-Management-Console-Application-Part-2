@@ -4,6 +4,7 @@ import org.example.models.Client;
 import org.example.models.User;
 import org.example.services.ClientService;
 import org.example.util.InputValidator;
+import org.example.views.MainMenu;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -18,6 +19,8 @@ public class ClientController {
 
     public ClientController(ClientService clientService){
         this.clientService = clientService;
+    }
+    public ClientController(){
     }
 
     public void addClient() {
@@ -83,23 +86,18 @@ public class ClientController {
 
         this.clientService.updateClient(id,map);
 
-
     }
 
     public void viewAllClients() {
       List<Client> clients =  this.clientService.getAllClients();
       clients.stream().forEach(System.out::println);
-
     }
 
     public void closeClient() {
         this.viewAllClients();
         int id = InputValidator.getInt("Enter ID to colse");
-        boolean isClose =  this.clientService.closeCline(id);
-        if(isClose){
-            System.out.println("Client closed successfully");
-        }else{
-            System.out.println("Client not closed");
-        }
+        String  isClose =  this.clientService.closeCline(id);
+        System.out.println(isClose);
+        new MainMenu().menuTeller();
     }
 }

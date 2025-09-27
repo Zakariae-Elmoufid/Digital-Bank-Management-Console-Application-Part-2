@@ -3,6 +3,7 @@ CREATE TYPE role_enum AS ENUM ('ADMIN', 'AUDITOR', 'MANAGER', 'TELLER');
 -- Type de compte (corrigé : noms standards)
 CREATE TYPE account_type AS ENUM ('CREDIT', 'CURRENT', 'SAVINGS');
 
+CREATE TYPE account_status AS ENUM ('ACTIVE', 'PENDING_CLOSURE', 'CLOSED');
 
 CREATE TYPE operation_type AS ENUM (
     'DEPOSIT',
@@ -37,7 +38,7 @@ CREATE TYPE credit_status AS ENUM ('PENDING', 'ACTIVE', 'LATE', 'CLOSED', 'REJEC
 
 -- Type de devise
 CREATE TYPE currency_type AS ENUM ('MAD', 'EUR', 'USD');
-
+create type client_status as enum ('ACTIVE','CLOSED', 'PENDING_CLOSURE');
 
 CREATE TABLE roles (
                        id SERIAL PRIMARY KEY,
@@ -68,7 +69,7 @@ CREATE TABLE clients (
                          last_name varchar(50),
                          salary DECIMAL(15,2),
                          cin VARCHAR(20),
-                         is_active BOOLEAN DEFAULT true,
+                         status client_status default 'ACTIVE',
                          address TEXT,
                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ;
@@ -79,7 +80,7 @@ CREATE TABLE accounts (
                           balance DECIMAL(15,2) NOT NULL DEFAULT 0.00,
                           overdraft_limit DECIMAL(15,2) DEFAULT 0.00,
                           currency currency_type DEFAULT 'MAD',
-                          is_active BOOLEAN DEFAULT true,
+                          status account_status default  'ACTIVE',
                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                           closed_at TIMESTAMP,
                           type account_type NOT NULL,
