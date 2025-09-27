@@ -2,10 +2,13 @@ package org.example.views;
 
 import org.example.controllers.AccountController;
 import org.example.controllers.ClientController;
+import org.example.controllers.TransactionController;
 import org.example.repositories.AccountRepository;
 import org.example.repositories.ClientRepository;
+import org.example.repositories.TransactionRepository;
 import org.example.services.AccountService;
 import org.example.services.ClientService;
+import org.example.services.TransactionServices;
 import org.example.util.InputValidator;
 
 import java.awt.*;
@@ -22,6 +25,10 @@ public class MainMenu {
     private AccountService accountService = new AccountService(accountRepository);
     private AccountController accountController = new AccountController(accountService, clientService);
 
+    private TransactionRepository transactionRepository = new  TransactionRepository();
+    private TransactionServices transactionServices = new TransactionServices(transactionRepository , accountRepository);
+    private TransactionController transactionController = new TransactionController(transactionServices , accountService);
+
     public void menuTeller(){
         System.out.println("===========================");
         System.out.println("Welcome to Teller ");
@@ -34,6 +41,9 @@ public class MainMenu {
         System.out.println("5. Create account ");
         System.out.println("6. List all accounts");
         System.out.println("7. Close account");
+        System.out.println("8. Deposit");
+        System.out.println("9. Withdraw");
+        System.out.println("10. Transfer");
         System.out.println(". exit");
 
         System.out.println();
@@ -66,6 +76,8 @@ public class MainMenu {
                     case 7:
                         accountController.closeAccount();
                         break;
+                    case 8:
+                         transactionController.deposit();
                     default:
                         System.out.println("Invalid choice , please choise just between 1 and 3");
                         isValid = false;

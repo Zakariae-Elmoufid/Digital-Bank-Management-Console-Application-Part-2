@@ -55,4 +55,10 @@ public class AccountService {
         return "request close has been successfully";
 
     }
+
+    public Account verifyRib(String rib){
+        List<Account> accounts =  this.accountRepository.getAll();
+        Account  account = (Account) accounts.stream().filter(acc -> acc.getRib().equals(rib)).findFirst().orElse(null);
+        return account;
+    }
 }
