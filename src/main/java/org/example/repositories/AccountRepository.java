@@ -1,7 +1,9 @@
 package org.example.repositories;
 
+import org.example.enums.AccountStatus;
 import org.example.enums.AccountType;
 import org.example.models.Account;
+import org.example.models.Client;
 import org.postgresql.util.PGobject;
 
 import java.math.BigDecimal;
@@ -56,7 +58,7 @@ public class AccountRepository extends  BaseRepository{
                            rs.getBigDecimal("balance"),
                            rs.getBigDecimal("overdraft_limit"),
                            AccountType.valueOf(rs.getString("account_type")),
-                           rs.getBoolean("is_active"),
+                           AccountStatus.valueOf(rs.getString("status")),
                            rs.getString("created_at")
                    ));               }
 
@@ -65,6 +67,57 @@ public class AccountRepository extends  BaseRepository{
            e.printStackTrace();
        }
        return null;
+    }
+
+    public List<Account> getAll(){
+        String  query = "select c.id AS client_id," +
+                "    c.first_name," +
+                "    c.last_name," +
+                "    c.salary," +
+                "    c.cin," +
+                "c.email, a.rib , a.balance , a.overdraft_limit , a.currency , a.status ,a.account_type " +
+                "   from accounts a " +
+                "inner join clients c on c.id = a.client_id ";
+        List<Account> accounts = new ArrayList<>();
+        try(PreparedStatement stmt = conn().prepareStatement(query)){
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()){
+                Client client = new Client();
+                client.setId(rs.getInt("client_id"));
+                client.setFirstName(rs.getString("first_name"));
+                client.setLastName(rs.getString("last_name"));
+                client.setSalary(rs.getBigDecimal("salary"));
+                client.setCin(rs.getString("cin"));
+                client.setEmail(rs.getString("email"));
+
+                Account account = new Account();
+                account.setRib(rs.getString("rib"));
+                account.setBalance(rs.getBigDecimal("balance"));
+                account.setOverdraftLimit(rs.getBigDecimal("overdraft_limit"));
+                account.setCurrency(rs.getString("currency"));
+                account.setStatus(AccountStatus.valueOf(rs.getString("status")));
+                account.setAccountType(AccountType.valueOf(rs.getString("account_type")));
+                account.setClient(client);
+                accounts.add(account);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return   accounts;
+
+    }
+
+    public boolean close(String rib){
+        String query = "update accounts set status = 'PENDING_CLOSURE' where rib = ?";
+        try(PreparedStatement stmt = conn().prepareStatement(query)){
+             stmt.setString(1,rib);
+             int row = stmt.executeUpdate();
+            return row > 0;
+
+        }catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
 

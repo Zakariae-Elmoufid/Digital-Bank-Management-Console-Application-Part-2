@@ -83,14 +83,11 @@ public class ClientRepository  extends BaseRepository implements ClientInterface
     }
 
    public boolean close(int id){
-       String query = "update clients set is_active = ? where id=?";
+       String query = "update clients set status = 'PENDING_CLOSURE' where id=?";
        try(PreparedStatement stmt = conn().prepareStatement(query)){
-           stmt.setBoolean(1,false);
-           stmt.setInt(2,id);
+           stmt.setInt(1,id);
            int row  = stmt.executeUpdate();
-           if (row > 0) {
-               return true;
-           }
+          return row > 0  ;
        }catch (SQLException e){
            e.printStackTrace();
        }

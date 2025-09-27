@@ -9,6 +9,8 @@ import java.util.List;
 public interface AccountInterface {
     public int create(int client_id, String rib, BigDecimal balance, AccountType type);
     public List<Account> getAccountByClientId(int client_id);
+    public List<Account> getAll();
+    public boolean close(String rib);
 
 
 }

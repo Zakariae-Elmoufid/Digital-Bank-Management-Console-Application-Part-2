@@ -6,12 +6,11 @@ import org.example.models.Client;
 import org.example.services.AccountService;
 import org.example.services.ClientService;
 import org.example.util.InputValidator;
+import org.example.views.MainMenu;
 
 import java.math.BigDecimal;
-import java.util.BitSet;
-import java.util.List;
-import java.util.PrimitiveIterator;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class AccountController {
 
@@ -22,7 +21,6 @@ public class AccountController {
     public AccountController(AccountService accountService, ClientService clientService) {
         this.accountService = accountService;
         this.clientService = clientService;
-
 
     }
 
@@ -50,21 +48,61 @@ public class AccountController {
             }
              canCreate = this.accountService.checkethreeAccountEachUser(id, type);
             if(canCreate){
-                System.out.println("Client already has this account type, choose another type");
+
+                int retryChoice = InputValidator.getInt(
+                        "Would you like to try another type or exit?\n" +
+                                "1. Try again\n" +
+                                "0. Exit"
+                );
+
+                if (retryChoice == 0) {
+                    new MainMenu().menuTeller();
+                }
             }
         }while (canCreate );
 
-
         BigDecimal balance = InputValidator.getBigDecimal("Enter account balance");
-
         Account account = this.accountService.createAccount(id, type, balance);
-
-
         if (account != null) {
             System.out.println("Account  created");
+            new MainMenu().menuTeller();
         } else {
             System.out.println("Account not created");
         }
+    }
+
+    public void listAllAccount(){
+       List<Account> accounts =  this.accountService.listAllAccount();
+
+        Map<Client, List<Account>> groupedByClient = accounts.stream().collect(Collectors.groupingBy(Account::getClient));
+
+        for(Map.Entry<Client, List<Account>> entry : groupedByClient.entrySet()){
+            Client client = entry.getKey();
+            System.out.println(client.getFirstName() + " " + client.getLastName() + " (" + client.getCin() + ")");
+            for (Account account : entry.getValue()) {
+                System.out.println("   -> " + account.getRib() + " | Balance: " + account.getBalance()+"  |  Type Account: " + account.getAccountType());
+            }
+        }
+        new MainMenu().menuTeller();
+
+    }
+
+    public void closeAccount(){
+        List<Account> accounts =  this.accountService.listAllAccount();
+
+        Map<Client, List<Account>> groupedByClient = accounts.stream().collect(Collectors.groupingBy(Account::getClient));
+
+        for(Map.Entry<Client, List<Account>> entry : groupedByClient.entrySet()){
+            Client client = entry.getKey();
+            System.out.println(client.getFirstName() + " " + client.getLastName() + " (" + client.getCin() + ")");
+            for (Account account : entry.getValue()) {
+                System.out.println("   -> " + account.getRib() + " | Balance: " + account.getBalance()+"  |  Type Account: " + account.getAccountType()+"  | Status: "+account.getStatus());
+            }
+        }
+        String rib = InputValidator.getString("Choose Rib Account  that you want to close");
+        String resultMessage= this.accountService.closeAccount(rib);
+        System.out.println(resultMessage);
+        new MainMenu().menuTeller();
     }
 
 }

@@ -54,7 +54,7 @@ public class AuthController {
                            break;
                        case 2:
                            System.out.println("TELLER");
-                            mainMenu.menuTeller(session.getSession("username"));
+                            mainMenu.menuTeller();
                            break;
                        case 3:
                            System.out.println("AUDITOR");

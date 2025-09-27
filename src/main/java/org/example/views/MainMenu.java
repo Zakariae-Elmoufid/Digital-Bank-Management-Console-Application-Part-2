@@ -22,9 +22,9 @@ public class MainMenu {
     private AccountService accountService = new AccountService(accountRepository);
     private AccountController accountController = new AccountController(accountService, clientService);
 
-    public void menuTeller(String username){
+    public void menuTeller(){
         System.out.println("===========================");
-        System.out.println("Welcome to Teller " + username);
+        System.out.println("Welcome to Teller ");
         System.out.println("============================");
         System.out.println("============menu============");
         System.out.println("1. add new client");
@@ -32,7 +32,7 @@ public class MainMenu {
         System.out.println("3. view all clients");
         System.out.println("4. close client");
         System.out.println("5. Create account ");
-        System.out.println("6. List my accounts");
+        System.out.println("6. List all accounts");
         System.out.println("7. Close account");
         System.out.println(". exit");
 
@@ -59,6 +59,12 @@ public class MainMenu {
                         break;
                     case 5:
                         accountController.createAccount();
+                        break;
+                    case 6:
+                        accountController.listAllAccount();
+                        break;
+                    case 7:
+                        accountController.closeAccount();
                         break;
                     default:
                         System.out.println("Invalid choice , please choise just between 1 and 3");
