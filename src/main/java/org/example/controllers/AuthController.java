@@ -51,6 +51,7 @@ public class AuthController {
                    switch (user.getRoleId()){
                        case 1:
                            System.out.println("Admin");
+                           mainMenu.menuAdmin();
                            break;
                        case 2:
                            System.out.println("TELLER");

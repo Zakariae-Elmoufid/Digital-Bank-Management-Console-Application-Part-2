@@ -1,0 +1,81 @@
+package org.example.repositories;
+
+
+import org.example.enums.CurrencyType;
+import org.example.enums.ModeRule;
+import org.example.enums.OperationType;
+import org.example.interfaces.FeeruleInterface;
+import org.example.models.FeeRule;
+import org.postgresql.util.PGobject;
+
+import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+public class FeeruleRepository extends BaseRepository implements FeeruleInterface  {
+
+    public int create(OperationType operationType, ModeRule modeRule, CurrencyType currencyType, BigDecimal value){
+            FeeRule feeRule = new FeeRule(operationType,modeRule,currencyType,value);
+
+        String query = "insert into fee_rules (operation_type,mode,currency,value ,is_active) values (?,?,?,?,?)";
+        try(PreparedStatement stmt = conn().prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
+            PGobject operationObj = new PGobject();
+            operationObj.setType("operation_type");
+            operationObj.setValue(feeRule.getOperationType().name());
+            stmt.setObject(1,operationObj);
+
+            PGobject modeObj = new PGobject();
+            modeObj.setType("mode_rule");
+            modeObj.setValue(feeRule.getMode().name());
+            stmt.setObject(2,modeObj);
+
+            PGobject currencyObj = new PGobject();
+            currencyObj.setType("currency_type");
+            currencyObj.setValue(feeRule.getCurrency().name());
+            stmt.setObject(3,currencyObj);
+
+            stmt.setBigDecimal(4,value);
+            stmt.setBoolean(5,false);
+
+            int rows = stmt.executeUpdate();
+            if(rows>0){
+                ResultSet rs = stmt.getGeneratedKeys();
+                if(rs.next()){
+                    feeRule.setId(rs.getInt(1));
+                    return rs.getInt(1);
+                }
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public List<FeeRule> getAll(){
+        String query = "select * from fee_rules";
+        List<FeeRule> feeRules = new ArrayList<>();
+        try(PreparedStatement  stmt = conn().prepareStatement(query)){
+            ResultSet rs  = stmt.executeQuery();
+            while (rs.next()){
+                feeRules.add(new FeeRule(
+                        rs.getInt("id"),
+                        OperationType.valueOf(rs.getString("operation_type")),
+                        ModeRule.valueOf(rs.getString("mode")),
+                        rs.getBigDecimal("value"),
+                        CurrencyType.valueOf(rs.getString("currency")),
+                        rs.getBoolean("is_active"),
+                        rs.getDate("created_at"),
+                        rs.getDate("updated_at")
+                        ));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return  feeRules;
+    }
+}

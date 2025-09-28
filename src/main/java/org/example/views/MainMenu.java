@@ -2,12 +2,15 @@ package org.example.views;
 
 import org.example.controllers.AccountController;
 import org.example.controllers.ClientController;
+import org.example.controllers.FeeruleController;
 import org.example.controllers.TransactionController;
 import org.example.repositories.AccountRepository;
 import org.example.repositories.ClientRepository;
+import org.example.repositories.FeeruleRepository;
 import org.example.repositories.TransactionRepository;
 import org.example.services.AccountService;
 import org.example.services.ClientService;
+import org.example.services.FeeruleService;
 import org.example.services.TransactionServices;
 import org.example.util.InputValidator;
 
@@ -29,10 +32,15 @@ public class MainMenu {
     private TransactionServices transactionServices = new TransactionServices(transactionRepository , accountRepository);
     private TransactionController transactionController = new TransactionController(transactionServices , accountService);
 
-    public void menuTeller(){
-        System.out.println("===========================");
-        System.out.println("Welcome to Teller ");
-        System.out.println("============================");
+
+
+    private FeeruleRepository  feeruleRepository = new FeeruleRepository();
+    private FeeruleService feeruleService = new FeeruleService(feeruleRepository);
+    private FeeruleController feeruleController = new FeeruleController(feeruleService);
+
+
+
+    public void teller(){
         System.out.println("============menu============");
         System.out.println("1. add new client");
         System.out.println("2. update info client");
@@ -44,9 +52,22 @@ public class MainMenu {
         System.out.println("8. Deposit");
         System.out.println("9. Withdraw");
         System.out.println("10. Transfer");
+        System.out.println("11. credit applications");
+    }
+
+    public void manager(){
+        System.out.println("12. validte close account ");
+        System.out.println("13. validate credit application ");
+        System.out.println("14. validate transaction extern");
+    }
+
+
+    public void menuTeller(){
+        System.out.println("============= Welcome Teller =================");
+        this.teller();
         System.out.println(". exit");
 
-        System.out.println();
+
         int choice = 0;
         boolean isValid = false;
 
@@ -79,7 +100,7 @@ public class MainMenu {
                     case 8:
                          transactionController.deposit();
                     default:
-                        System.out.println("Invalid choice , please choise just between 1 and 3");
+                        System.out.println("Invalid choice ");
                         isValid = false;
                         break;
                 }
@@ -88,6 +109,52 @@ public class MainMenu {
                 sc.nextLine();
             }
         }while(!isValid);
+
+
+
+    }
+
+    public void menuManager(){
+        System.out.println("============= Welcome manager =================");
+        this.teller();
+        this.manager();
+
+    }
+
+    public void menuAdmin(){
+        System.out.println("============= Welcome admin =================");
+        this.teller();
+        this.manager();
+
+        System.out.println("15. Create fee rules.");
+        System.out.println("16. List fee rules.");
+        System.out.println("17. Update fee rules.");
+        System.out.println("18. Activate fee rules.");
+        System.out.println("19. Deactivate fee rules.");
+
+        int choice = 0;
+        boolean isValid = false;
+        do{
+            choice = InputValidator.getInt("write what number would you like to do?");
+            isValid = true;
+            switch (choice) {
+                case 15:
+                    this.feeruleController.addFeeRule();
+                    break;
+                case 16:
+                    this.feeruleController.listFeerules();
+                    break;
+                case
+
+                default:
+                    System.out.println("Invalid choice ");
+                    isValid = false;
+                    break;
+            }
+        }while (!isValid);
+
+
+
 
 
 
