@@ -75,7 +75,7 @@ public class AccountRepository extends  BaseRepository{
                 "    c.last_name," +
                 "    c.salary," +
                 "    c.cin," +
-                "c.email, a.rib , a.balance , a.overdraft_limit , a.currency , a.status ,a.account_type " +
+                "c.email, a.id as account_id , a.rib , a.balance , a.overdraft_limit , a.currency , a.status ,a.account_type " +
                 "   from accounts a " +
                 "inner join clients c on c.id = a.client_id ";
         List<Account> accounts = new ArrayList<>();
@@ -92,6 +92,7 @@ public class AccountRepository extends  BaseRepository{
 
                 Account account = new Account();
                 account.setRib(rs.getString("rib"));
+                account.setId(rs.getInt("account_id"));
                 account.setBalance(rs.getBigDecimal("balance"));
                 account.setOverdraftLimit(rs.getBigDecimal("overdraft_limit"));
                 account.setCurrency(rs.getString("currency"));
@@ -114,6 +115,20 @@ public class AccountRepository extends  BaseRepository{
              int row = stmt.executeUpdate();
             return row > 0;
 
+        }catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean deposit(BigDecimal amount , Account account){
+        account.deposit(amount);
+        String query = "update accounts set  balance = ? where rib = ?";
+        try(PreparedStatement stmt = conn().prepareStatement(query)){
+            stmt.setBigDecimal(1,amount);
+            stmt.setString(2,account.getRib());
+            int row = stmt.executeUpdate();
+            return row > 0;
         }catch (SQLException e){
             e.printStackTrace();
             return false;
