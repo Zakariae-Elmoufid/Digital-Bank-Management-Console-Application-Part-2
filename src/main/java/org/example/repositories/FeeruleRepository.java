@@ -13,8 +13,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class FeeruleRepository extends BaseRepository implements FeeruleInterface  {
 
@@ -69,8 +72,8 @@ public class FeeruleRepository extends BaseRepository implements FeeruleInterfac
                         rs.getBigDecimal("value"),
                         CurrencyType.valueOf(rs.getString("currency")),
                         rs.getBoolean("is_active"),
-                        rs.getDate("created_at"),
-                        rs.getDate("updated_at")
+                        rs.getTimestamp("created_at").toLocalDateTime(),
+                        rs.getTimestamp("updated_at").toLocalDateTime()
                         ));
             }
         }catch (SQLException e){
@@ -78,4 +81,34 @@ public class FeeruleRepository extends BaseRepository implements FeeruleInterfac
         }
         return  feeRules;
     }
+
+    public boolean update(int id , Map<String, Object> infoUpdate){
+        StringBuilder query = new StringBuilder("update fee_rules set updated_at = ? ,");
+
+        List<Object> values = new ArrayList<>();
+        values.add(LocalDateTime.now());
+
+        for(Map.Entry<String, Object> entry : infoUpdate.entrySet()){
+            query.append(entry.getKey()).append(" = ?, ");
+            values.add(entry.getValue());
+        }
+        query.delete(query.length()-2, query.length());
+        query.append(" where id=?");
+        values.add(id);
+
+        try(PreparedStatement stmt = conn().prepareStatement(query.toString())){
+            for(int i = 0; i < values.size(); i++){
+                stmt.setObject( i+1, values.get(i));
+            }
+            int row  = stmt.executeUpdate();
+            if (row > 0) {
+                return true;
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+            return false;
+    }
+
+
 }

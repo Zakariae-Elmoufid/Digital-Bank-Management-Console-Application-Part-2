@@ -9,7 +9,9 @@ import org.example.services.FeeruleService;
 import org.example.util.InputValidator;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FeeruleController {
 
@@ -76,5 +78,50 @@ public class FeeruleController {
     public void listFeerules(){
         List<FeeRule>  feeRules = this.feeruleService.getFeerules();
         feeRules.forEach(System.out::println);
+    }
+    
+    public void  updateFeeRule(){
+        this.listFeerules();
+        int id = InputValidator.getInt("Enter ID to update");
+
+        Map<String,Object> infoUpdate = new HashMap<>();
+
+        boolean continuee = true;
+        do {
+            System.out.println("1. value");
+            System.out.println("2. currency");
+            System.out.println("3. type operation");
+            System.out.println("4. mode");
+
+
+            int choice = InputValidator.getInt("Enter choice to update");
+
+            switch (choice) {
+                case 1:
+                    infoUpdate.put("value",InputValidator.getBigDecimal("Entre new value"));
+                    break;
+                case 2:
+                    infoUpdate.put("currency",InputValidator.getString("Entre new type currency {'MAD', 'EUR', 'USD'}"));
+                    break;
+                case 3:
+                    infoUpdate.put("operation_type",InputValidator.getString("Entre new operation { 'DEPOSIT' 'WITHDRAW','TRANSFER_OUT','TRANSFER_IN','EXTERNAL_TRANSFER','FEE','FEE_INCOME','DEBIT'} "));
+                    break;
+                case 4:
+                    infoUpdate.put("address",InputValidator.getString("Enter new Mode"));
+                    break;
+                default:
+                    System.out.println("Invalid choice");
+                    break;
+            }
+            continuee = InputValidator.getBoolean("would you like update author info? \ntrue. yes \nfalse. no") ;
+        }while (continuee);
+
+         boolean isUpdate = this.feeruleService.updateFeeRule(id,infoUpdate);
+         if(isUpdate){
+             System.out.println("Fee rule updated");
+         }else{
+             System.out.println("Fee rule not updated");
+         }
+
     }
 }

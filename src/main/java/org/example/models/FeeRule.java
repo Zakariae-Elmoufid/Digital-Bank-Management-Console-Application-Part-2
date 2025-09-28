@@ -5,6 +5,7 @@ import org.example.enums.ModeRule;
 import org.example.enums.OperationType;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class FeeRule {
@@ -15,12 +16,12 @@ public class FeeRule {
     private BigDecimal value;
     private CurrencyType currency;
     private boolean active;
-    private Date created_at;
-    private Date updated_at;
+    private LocalDateTime created_at;
+    private LocalDateTime updated_at;
 
 
 
-    public FeeRule(int id, OperationType operationType, ModeRule mode, BigDecimal value, CurrencyType currency, boolean active, Date created_at, Date updated_at) {
+    public FeeRule(int id, OperationType operationType, ModeRule mode, BigDecimal value, CurrencyType currency, boolean active, LocalDateTime created_at, LocalDateTime updated_at) {
         this.id = id;
         this.operationType = operationType;
         this.mode = mode;
@@ -65,11 +66,11 @@ public class FeeRule {
         this.active = active;
     }
 
-    public Date getUpdated_at() {
+    public LocalDateTime getUpdated_at() {
         return updated_at;
     }
 
-    public void setUpdated_at(Date updated_at) {
+    public void setUpdated_at(LocalDateTime updated_at) {
         this.updated_at = updated_at;
     }
 
@@ -109,11 +110,11 @@ public class FeeRule {
         this.currency = currency;
     }
 
-    public Date getCreated_at() {
+    public LocalDateTime getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(Date created_at) {
+    public void setCreated_at(LocalDateTime created_at) {
         this.created_at = created_at;
     }
 }

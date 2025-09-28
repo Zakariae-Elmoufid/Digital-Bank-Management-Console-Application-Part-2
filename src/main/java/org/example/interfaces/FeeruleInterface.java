@@ -7,9 +7,11 @@ import org.example.models.FeeRule;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public interface FeeruleInterface {
 
     public int create(OperationType operationType, ModeRule modeRule, CurrencyType currencyType, BigDecimal value);
     public List<FeeRule> getAll();
+    public boolean update(int id , Map<String, Object> infoUpdate);
 }

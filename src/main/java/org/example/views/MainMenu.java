@@ -144,7 +144,9 @@ public class MainMenu {
                 case 16:
                     this.feeruleController.listFeerules();
                     break;
-                case
+                case 17:
+                    this.feeruleController.updateFeeRule();
+                    break;
 
                 default:
                     System.out.println("Invalid choice ");

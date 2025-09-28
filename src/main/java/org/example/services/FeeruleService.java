@@ -8,6 +8,7 @@ import org.example.repositories.FeeruleRepository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public class FeeruleService {
     private FeeruleRepository feeruleRepository;
@@ -23,5 +24,9 @@ public class FeeruleService {
 
    public List<FeeRule> getFeerules(){
         return this.feeruleRepository.getAll();
+   }
+
+   public boolean updateFeeRule(int id, Map<String, Object>  infoUpdate){
+        return this.feeruleRepository.update(id, infoUpdate);
    }
 }
