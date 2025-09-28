@@ -21,6 +21,10 @@ public class FeeRule {
 
 
 
+    public FeeRule() {
+
+    }
+
     public FeeRule(int id, OperationType operationType, ModeRule mode, BigDecimal value, CurrencyType currency, boolean active, LocalDateTime created_at, LocalDateTime updated_at) {
         this.id = id;
         this.operationType = operationType;

@@ -14,4 +14,6 @@ public interface FeeruleInterface {
     public int create(OperationType operationType, ModeRule modeRule, CurrencyType currencyType, BigDecimal value);
     public List<FeeRule> getAll();
     public boolean update(int id , Map<String, Object> infoUpdate);
+    public boolean activate(int id);
+    public boolean deactivate(int id);
 }

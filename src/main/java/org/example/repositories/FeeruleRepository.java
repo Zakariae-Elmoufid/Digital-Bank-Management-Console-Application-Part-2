@@ -110,5 +110,36 @@ public class FeeruleRepository extends BaseRepository implements FeeruleInterfac
             return false;
     }
 
+    public boolean activate(int id){
+      String query = "update fee_rules set is_active = true where id = ?";
+
+      try(PreparedStatement stmt = conn().prepareStatement(query)){
+          stmt.setInt(1,id);
+          int row = stmt.executeUpdate();
+          if(row>0){
+              new FeeRule().setActive(true);
+              return true;
+          }
+      }catch (SQLException e){
+          e.printStackTrace();
+      }
+      return false;
+    }
+
+    public boolean deactivate(int id){
+        String query = "update fee_rules set is_active = false where id = ?";
+        try(PreparedStatement stmt = conn().prepareStatement(query)){
+            stmt.setInt(1,id);
+            int row = stmt.executeUpdate();
+            if(row > 0){
+                new FeeRule().setActive(false);
+                return true;
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return  false;
+    }
+
 
 }

@@ -7,6 +7,7 @@ import org.example.enums.OperationType;
 import org.example.models.FeeRule;
 import org.example.services.FeeruleService;
 import org.example.util.InputValidator;
+import org.example.views.MainMenu;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -29,15 +30,15 @@ public class FeeruleController {
                     "Select operation type: \n" +
                             "1. DEPOSIT\n" +
                             "2. WITHDRAW\n" +
-                            "3. TRANSFER_OUT\n" +
-                            "4. TRANSFER_IN\n" +
+                            "3. TRANSFER_INTERNAL\n" +
+                            "4. TRANSFER_EXTERNAL\n" +
                             "5. CREDIT_DISBURSEMENT"
             );
             switch (choiceOperationType) {
                 case 1 -> operationType = OperationType.DEPOSIT;
                 case 2 -> operationType = OperationType.WITHDRAW;
-                case 3 -> operationType = OperationType.TRANSFER_OUT;
-                case 4 -> operationType = OperationType.TRANSFER_IN;
+                case 3 -> operationType = OperationType.TRANSFER_INTERNAL;
+                case 4 -> operationType = OperationType.TRANSFER_EXTERNAL;
                 case 5 -> operationType = OperationType.CREDIT_DISBURSEMENT;
                 default -> System.out.println("Invalid choice, try again.");
             }
@@ -72,7 +73,7 @@ public class FeeruleController {
         }else{
             System.out.println("Fee rule not added");
         }
-
+        new MainMenu().menuAdmin();
     }
 
     public void listFeerules(){
@@ -104,10 +105,10 @@ public class FeeruleController {
                     infoUpdate.put("currency",InputValidator.getString("Entre new type currency {'MAD', 'EUR', 'USD'}"));
                     break;
                 case 3:
-                    infoUpdate.put("operation_type",InputValidator.getString("Entre new operation { 'DEPOSIT' 'WITHDRAW','TRANSFER_OUT','TRANSFER_IN','EXTERNAL_TRANSFER','FEE','FEE_INCOME','DEBIT'} "));
+                    infoUpdate.put("operation_type",InputValidator.getString("Entre new operation { 'DEPOSIT' 'WITHDRAW','TRANSFER_INTERNAL','TRANSFER_EXTERNAL','CREDIT_DISBURSEMENT'} "));
                     break;
                 case 4:
-                    infoUpdate.put("address",InputValidator.getString("Enter new Mode"));
+                    infoUpdate.put("mode",InputValidator.getString("Enter new Mode"));
                     break;
                 default:
                     System.out.println("Invalid choice");
@@ -122,6 +123,30 @@ public class FeeruleController {
          }else{
              System.out.println("Fee rule not updated");
          }
+        new MainMenu().menuAdmin();
+
+    }
+
+    public void activeFeeRule(){
+        List<FeeRule>  feeRules = this.feeruleService.getFeerules();
+        feeRules.stream().filter(f->f.isActive() == false).forEach(System.out::println);
+
+        int id = InputValidator.getInt("Enter ID to active fee rule");
+
+        boolean isActive = this.feeruleService.activeRule(id);
+        if(isActive) System.out.println("Fee rule activated");
+        else System.out.println("Fee rule not activated");
+        new MainMenu().menuAdmin();
+    }
+    public void deactivateFeeRule(){
+        List<FeeRule>  feeRules = this.feeruleService.getFeerules();
+        feeRules.stream().filter(f->f.isActive() == true).forEach(System.out::println);
+
+        int id = InputValidator.getInt("Enter ID to deactivate fee rule");
+        boolean isDeactive = this.feeruleService.deactivateRule(id);
+        if(isDeactive) System.out.println("Fee rule deactivated");
+        else System.out.println("Fee rule not deactivated");
+        new MainMenu().menuAdmin();
 
     }
 }

@@ -147,6 +147,11 @@ public class MainMenu {
                 case 17:
                     this.feeruleController.updateFeeRule();
                     break;
+                case 18:
+                    this.feeruleController.activeFeeRule();
+                    break;
+                case 19:
+                    this.feeruleController.deactivateFeeRule();
 
                 default:
                     System.out.println("Invalid choice ");

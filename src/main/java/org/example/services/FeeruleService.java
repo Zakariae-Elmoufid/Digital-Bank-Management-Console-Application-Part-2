@@ -29,4 +29,14 @@ public class FeeruleService {
    public boolean updateFeeRule(int id, Map<String, Object>  infoUpdate){
         return this.feeruleRepository.update(id, infoUpdate);
    }
+
+   public boolean activeRule(int id){
+      return   this.feeruleRepository.activate(id);
+   }
+
+   public boolean deactivateRule(int id){
+       return  this.feeruleRepository.deactivate(id);
+   }
+
+
 }
