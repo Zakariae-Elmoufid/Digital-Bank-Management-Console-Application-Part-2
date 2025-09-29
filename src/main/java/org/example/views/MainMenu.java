@@ -99,6 +99,10 @@ public class MainMenu {
                         break;
                     case 8:
                          transactionController.deposit();
+                         break;
+                    case 9:
+                        transactionController.withdraw();
+                        break;
                     default:
                         System.out.println("Invalid choice ");
                         isValid = false;

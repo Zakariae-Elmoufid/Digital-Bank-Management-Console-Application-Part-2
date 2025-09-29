@@ -135,5 +135,19 @@ public class AccountRepository extends  BaseRepository{
         }
     }
 
+    public boolean withdraw(BigDecimal amount , Account account){
+        account.withdraw(amount);
+        String query = "update accounts set  balance = ? where rib = ?";
+        try(PreparedStatement stmt = conn().prepareStatement(query)){
+            stmt.setBigDecimal(1,account.getBalance());
+            stmt.setString(2, account.getRib());
+            int row = stmt.executeUpdate();
+            return row > 0;
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
 }

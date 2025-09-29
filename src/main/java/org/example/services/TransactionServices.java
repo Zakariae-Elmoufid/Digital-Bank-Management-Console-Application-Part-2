@@ -6,6 +6,7 @@ import org.example.repositories.AccountRepository;
 import org.example.repositories.TransactionRepository;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 public class TransactionServices {
 
@@ -21,8 +22,21 @@ public class TransactionServices {
         this.accountRepository.deposit(amount, account);
         int  lastId =  transactionRepository.deposit(amount, account);
         if(lastId < 0) return false;
-
         return true;
+    }
+
+
+
+    public String withdraw(BigDecimal amount, Account account){
+        if(amount.compareTo(account.getBalance()) > 0 ){
+            return "Insufficient funds";
+        }
+        boolean isWithdraw =  this.accountRepository.withdraw(amount , account);
+        if(isWithdraw){
+            int lastId =  transactionRepository.withdraw(amount, account);
+            return "Successfully Withdrawn";
+        }
+        else return "failed to Withdraw";
 
     }
 

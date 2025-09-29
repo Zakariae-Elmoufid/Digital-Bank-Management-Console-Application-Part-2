@@ -6,4 +6,5 @@ import java.math.BigDecimal;
 
 public interface TransactionInterface {
     public int deposit(BigDecimal amount, Account account);
+    public int withdraw(BigDecimal amount, Account account);
 }

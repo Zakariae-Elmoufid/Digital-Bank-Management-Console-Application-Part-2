@@ -16,4 +16,5 @@ public interface FeeruleInterface {
     public boolean update(int id , Map<String, Object> infoUpdate);
     public boolean activate(int id);
     public boolean deactivate(int id);
+    public FeeRule findByOperationTypeAndCurrencyAndIsActive(OperationType operationType,CurrencyType currencyType );
 }

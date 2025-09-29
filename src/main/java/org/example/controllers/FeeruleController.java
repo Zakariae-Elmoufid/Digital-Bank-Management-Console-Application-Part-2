@@ -48,7 +48,7 @@ public class FeeruleController {
         while (modeRule == null) {
             int choiceMode = InputValidator.getInt("Select Mode rule:\n1. FIX\n2. PERCENT");
             switch (choiceMode) {
-                case 1 -> modeRule = ModeRule.FIXED;
+                case 1 -> modeRule = ModeRule.FIX;
                 case 2 -> modeRule = ModeRule.PERCENT;
                 default -> System.out.println("Invalid choice, try again.");
             }

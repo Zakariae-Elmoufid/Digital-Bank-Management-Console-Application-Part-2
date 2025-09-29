@@ -141,5 +141,34 @@ public class FeeruleRepository extends BaseRepository implements FeeruleInterfac
         return  false;
     }
 
+    public FeeRule findByOperationTypeAndCurrencyAndIsActive(OperationType operationType,CurrencyType currencyType){
+        String query = "select * from fee_rules where operation_type=? and currency_type=? and is_active = true" +
+                "ORDER BY created_at DESC LIMIT 1 ";
+        try(PreparedStatement stmt = conn().prepareStatement(query)){
+            stmt.setObject(1,operationType);
+            stmt.setObject(2,currencyType);
+
+            try(ResultSet rs = stmt.executeQuery()){
+                if(rs.next()){
+                   return  new FeeRule(
+                            rs.getInt("id"),
+                            operationType,
+                            ModeRule.valueOf(rs.getString("mode")),
+                            rs.getBigDecimal("value"),
+                            currencyType,
+                            true,
+                            rs.getTimestamp("creatred_at").toLocalDateTime(),
+                            rs.getTimestamp("updated_at").toLocalDateTime()
+                    );
+
+                }
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+      return null;
+    }
+
 
 }
