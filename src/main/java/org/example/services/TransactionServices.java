@@ -26,11 +26,8 @@ public class TransactionServices {
     }
 
 
-
     public String withdraw(BigDecimal amount, Account account){
-        if(amount.compareTo(account.getBalance()) > 0 ){
-            return "Insufficient funds";
-        }
+        if(amount.compareTo(account.getBalance()) > 0 )return "Insufficient funds" ;
         boolean isWithdraw =  this.accountRepository.withdraw(amount , account);
         if(isWithdraw){
             int lastId =  transactionRepository.withdraw(amount, account);
@@ -38,6 +35,24 @@ public class TransactionServices {
         }
         else return "failed to Withdraw";
 
+    }
+
+    public boolean transferInter(Account fromAccount,Account toAccount,BigDecimal amount){
+        boolean isWithdrawn = this.accountRepository.withdraw(amount, fromAccount);
+        boolean isDeposit = this.accountRepository.deposit(amount, toAccount);
+        if(isWithdrawn && isDeposit){
+            int lastId =  transactionRepository.transferInter(amount,fromAccount, toAccount);
+            return true;
+        }else return false;
+    }
+
+    public boolean transferExternal(Account fromAccount,Account toAccount,BigDecimal amount ,BigDecimal feeAmount , BigDecimal amountPlusFee,int feeRuleId ,String discripption){
+        boolean isWithdrawn = this.accountRepository.withdraw(amountPlusFee, fromAccount);
+        boolean isDeposit = this.accountRepository.deposit(amount, toAccount);
+        if(isWithdrawn && isDeposit){
+            int lastId =  transactionRepository.transferExternal(fromAccount, toAccount ,amount,feeAmount ,amountPlusFee,discripption ,feeRuleId);
+            return true;
+        }else return false;
     }
 
 

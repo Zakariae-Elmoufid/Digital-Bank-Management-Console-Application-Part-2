@@ -24,13 +24,11 @@ public class MainMenu {
     private ClientRepository clientRepository = new ClientRepository();
     private ClientService clientService = new ClientService(clientRepository);
     private ClientController clientController = new ClientController(clientService);
+
+
     private AccountRepository accountRepository = new  AccountRepository();
     private AccountService accountService = new AccountService(accountRepository);
     private AccountController accountController = new AccountController(accountService, clientService);
-
-    private TransactionRepository transactionRepository = new  TransactionRepository();
-    private TransactionServices transactionServices = new TransactionServices(transactionRepository , accountRepository);
-    private TransactionController transactionController = new TransactionController(transactionServices , accountService);
 
 
 
@@ -38,6 +36,10 @@ public class MainMenu {
     private FeeruleService feeruleService = new FeeruleService(feeruleRepository);
     private FeeruleController feeruleController = new FeeruleController(feeruleService);
 
+
+    private TransactionRepository transactionRepository = new  TransactionRepository();
+    private TransactionServices transactionServices = new TransactionServices(transactionRepository , accountRepository);
+    private TransactionController transactionController = new TransactionController(transactionServices , accountService , clientService ,feeruleService);
 
 
     public void teller(){
@@ -102,6 +104,12 @@ public class MainMenu {
                          break;
                     case 9:
                         transactionController.withdraw();
+                        break;
+                    case 10:
+                        int Transfer = InputValidator.getInt("would you like to transfer.\n1. Intern. \n2. external");
+                        if(Transfer == 1) this.transactionController.transferIntern();
+                        else if(Transfer == 2) this.transactionController.transferExternal();
+                        else System.out.println("Invalid choice , try again");
                         break;
                     default:
                         System.out.println("Invalid choice ");

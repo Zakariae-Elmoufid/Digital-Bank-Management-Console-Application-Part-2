@@ -5,6 +5,7 @@ public enum TransactionType {
     WITHDRAW,
     TRANSFER_OUT,
     TRANSFER_IN,
+    INTERNAL_TRANSFER,
     EXTERNAL_TRANSFER,
     DEBIT
 }

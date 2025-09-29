@@ -142,11 +142,17 @@ public class FeeruleRepository extends BaseRepository implements FeeruleInterfac
     }
 
     public FeeRule findByOperationTypeAndCurrencyAndIsActive(OperationType operationType,CurrencyType currencyType){
-        String query = "select * from fee_rules where operation_type=? and currency_type=? and is_active = true" +
-                "ORDER BY created_at DESC LIMIT 1 ";
+        String query = "select * from fee_rules where operation_type =? and currency=? and is_active = true ORDER BY created_at DESC LIMIT 1 ";
         try(PreparedStatement stmt = conn().prepareStatement(query)){
-            stmt.setObject(1,operationType);
-            stmt.setObject(2,currencyType);
+            PGobject OperationObj = new PGobject();
+            OperationObj.setType("operation_type");
+            OperationObj.setValue(operationType.name());
+            stmt.setObject(1,OperationObj);
+
+            PGobject CurrencyObj = new PGobject();
+            CurrencyObj.setType("currency_type");
+            CurrencyObj.setValue(currencyType.name());
+            stmt.setObject(2,CurrencyObj);
 
             try(ResultSet rs = stmt.executeQuery()){
                 if(rs.next()){
@@ -157,7 +163,7 @@ public class FeeruleRepository extends BaseRepository implements FeeruleInterfac
                             rs.getBigDecimal("value"),
                             currencyType,
                             true,
-                            rs.getTimestamp("creatred_at").toLocalDateTime(),
+                            rs.getTimestamp("created_at").toLocalDateTime(),
                             rs.getTimestamp("updated_at").toLocalDateTime()
                     );
 

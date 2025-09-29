@@ -38,17 +38,17 @@ public class FeeruleService {
        return  this.feeruleRepository.deactivate(id);
    }
 
-   public BigDecimal calculateFee(OperationType operationType,  CurrencyType currencyType , BigDecimal amount){
+   public FeeRule calculateFee(OperationType operationType,  CurrencyType currencyType , BigDecimal amount){
         FeeRule feeRule = this.feeruleRepository.findByOperationTypeAndCurrencyAndIsActive(operationType, currencyType);
-        if(feeRule == null) return BigDecimal.ZERO;
+        if(feeRule == null) return null;
+
         switch(feeRule.getMode()){
             case FIX :
-                return  feeRule.getValue();
+                break;
             case PERCENT :
-                return  feeRule.getValue().multiply(amount).divide(new BigDecimal(100));
-            default:
-                return   BigDecimal.ZERO;
+                 feeRule.setValue(feeRule.getValue().multiply(amount).divide(new BigDecimal(100)));
         }
+        return feeRule;
    }
 
 
