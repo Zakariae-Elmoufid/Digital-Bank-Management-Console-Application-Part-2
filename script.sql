@@ -173,6 +173,19 @@ CREATE TABLE exchange_rates
     FOREIGN KEY (updated_by) REFERENCES users (id)
 );
 
+CREATE TYPE source_type AS ENUM ('EXTERNAL_TRANSFER', 'PENALTY', 'FOREING_WITHDRAW','INTERE');
+
+create table banke_revenue (
+    id serial primary key ,
+    source_type source_type,
+    amount DECIMAL(10,6) not null,
+    currency currency_type default  'MAD',
+    occurred_at timestamp default  current_timestamp,
+    credit_payments_id int,
+    transaction_id int ,
+    foreign key credit_payments_id references credit_payments(id),
+    foreign key transaction_id references transactions(id)
+);
 
 
 

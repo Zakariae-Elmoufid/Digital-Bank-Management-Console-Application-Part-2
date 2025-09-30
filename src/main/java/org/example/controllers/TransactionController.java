@@ -14,6 +14,7 @@ import org.example.util.InputValidator;
 import org.example.views.MainMenu;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -121,10 +122,12 @@ public class TransactionController {
                     }
                     }
             }
+        new MainMenu().menuTeller();
+
 
     }
 
-    public void transferExternal() {
+    public void transferExternal()  {
         List<Account> accounts = this.accountService.listAllAccount();
         Map<Client, List<Account>> groupedByClient = accounts.stream().collect(Collectors.groupingBy(Account::getClient));
         for(Map.Entry<Client, List<Account>> e : groupedByClient.entrySet()){
@@ -138,9 +141,8 @@ public class TransactionController {
         boolean success = false;
         while (!success) {
             if(accounts.size() >= 1 ) {
-                System.out.println(accounts);
                 String fromAccountRib = InputValidator.getString("Enter From Account Rib");
-                String toAccountRib = InputValidator.getString("Enter To Account Rib Externale");
+                String toAccountRib = InputValidator.getString("Enter To Account Rib External");
 
                 Account fromAccount = accountService.verifyRib(fromAccountRib);
                 if (fromAccount == null ) System.out.println("From account not found");
@@ -161,10 +163,11 @@ public class TransactionController {
                         success = true;
                     }else System.out.println("Transfer failed");
                 }
+            }else {
+                System.out.println("No more accounts found");
             }
         }
-
-
+        new MainMenu().menuTeller();
     }
 
 }

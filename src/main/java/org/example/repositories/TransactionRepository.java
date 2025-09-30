@@ -1,7 +1,9 @@
 package org.example.repositories;
 
+import org.example.enums.SourceType;
 import org.example.interfaces.TransactionInterface;
 import org.example.models.Account;
+import org.example.models.BankRevenue;
 import org.example.models.Transaction;
 import org.postgresql.util.PGobject;
 
@@ -164,6 +166,32 @@ public class TransactionRepository extends BaseRepository implements Transaction
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return -1;
+    }
+
+    public int AddRevenueTransaction(SourceType type, BigDecimal feeAmount, int transaction_id)  {
+         String query = "insert into banke_revenue(source_type , revenue, transaction_id) values (?,?,?)";
+        BankRevenue bankRevenue = new BankRevenue(null, String.valueOf(type),feeAmount,MAD);
+         try(PreparedStatement stmt = conn().prepareStatement(query , Statement.RETURN_GENERATED_KEYS)){
+             PGobject typeObj = new PGobject();
+             typeObj.setType("source_type");
+             typeObj.setValue(type.name());
+             stmt.setObject(1,typeObj);
+             stmt.setBigDecimal(2,feeAmount);
+             stmt.setInt(3,transaction_id);
+             int row = stmt.executeUpdate();
+             if(row>0){
+                 ResultSet rs = stmt.getGeneratedKeys();
+                 if(rs.next()){
+                    int  id =rs.getInt(1);
+                    bankRevenue.setId(id);
+                    return id;
+                 }
+             }
+
+         }catch (SQLException e){
+            e.printStackTrace();
+         }
         return -1;
     }
 

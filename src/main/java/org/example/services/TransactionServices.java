@@ -1,12 +1,17 @@
 package org.example.services;
 
+import org.example.enums.SourceType;
 import org.example.models.Account;
 import org.example.models.Transaction;
 import org.example.repositories.AccountRepository;
 import org.example.repositories.TransactionRepository;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.Optional;
+
+
+
 
 public class TransactionServices {
 
@@ -46,11 +51,12 @@ public class TransactionServices {
         }else return false;
     }
 
-    public boolean transferExternal(Account fromAccount,Account toAccount,BigDecimal amount ,BigDecimal feeAmount , BigDecimal amountPlusFee,int feeRuleId ,String discripption){
+    public boolean transferExternal(Account fromAccount,Account toAccount,BigDecimal amount ,BigDecimal feeAmount , BigDecimal amountPlusFee,int feeRuleId ,String discripption)  {
         boolean isWithdrawn = this.accountRepository.withdraw(amountPlusFee, fromAccount);
         boolean isDeposit = this.accountRepository.deposit(amount, toAccount);
         if(isWithdrawn && isDeposit){
-            int lastId =  transactionRepository.transferExternal(fromAccount, toAccount ,amount,feeAmount ,amountPlusFee,discripption ,feeRuleId);
+            int transaction_id =  transactionRepository.transferExternal(fromAccount, toAccount ,amount,feeAmount ,amountPlusFee,discripption ,feeRuleId);
+            int bankRevenue = transactionRepository.AddRevenueTransaction(SourceType.EXTERNAL_TRANSFER,feeAmount,transaction_id);
             return true;
         }else return false;
     }
