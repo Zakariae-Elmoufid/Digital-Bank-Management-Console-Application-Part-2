@@ -81,7 +81,7 @@ public class ClientController {
                     System.out.println("Invalid choice");
                     break;
             }
-                continu = InputValidator.getBoolean("would you like update authr info? \ntrue. yes \nfalse. no") ;
+                continu = InputValidator.getBoolean("would you like update author info? \ntrue. yes \nfalse. no") ;
         }while (continu);
 
         this.clientService.updateClient(id,map);

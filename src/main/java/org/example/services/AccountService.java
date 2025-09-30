@@ -61,4 +61,9 @@ public class AccountService {
         Account  account = (Account) accounts.stream().filter(acc -> acc.getRib().equals(rib)).findFirst().orElse(null);
         return account;
     }
+
+    public boolean verifyBalance(BigDecimal amount, Account account){
+        if(amount.compareTo(account.getBalance()) < 0 ) return true;
+        return true;
+    }
 }
