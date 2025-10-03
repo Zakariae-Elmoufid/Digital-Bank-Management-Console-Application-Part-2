@@ -1,23 +1,17 @@
 package org.example.views;
 
-import org.example.controllers.AccountController;
-import org.example.controllers.ClientController;
-import org.example.controllers.FeeruleController;
-import org.example.controllers.TransactionController;
-import org.example.repositories.AccountRepository;
-import org.example.repositories.ClientRepository;
-import org.example.repositories.FeeruleRepository;
-import org.example.repositories.TransactionRepository;
-import org.example.services.AccountService;
-import org.example.services.ClientService;
-import org.example.services.FeeruleService;
-import org.example.services.TransactionServices;
+import org.example.controllers.*;
+import org.example.repositories.*;
+import org.example.services.*;
 import org.example.util.InputValidator;
 
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MainMenu {
 
@@ -42,8 +36,30 @@ public class MainMenu {
     private TransactionServices transactionServices = new TransactionServices(transactionRepository , accountRepository);
     private TransactionController transactionController = new TransactionController(transactionServices , accountService , clientService ,feeruleService);
 
+    private CreditRepository creditRepository = new  CreditRepository();
+    private CreditService creditService = new CreditService(creditRepository,accountRepository,transactionRepository);
+    private CreditController creditController = new CreditController(creditService, accountService,clientService);
+
+
+
+
+
+
 
     public void teller(){
+
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        Runnable task = () -> {
+            try {
+                System.out.println("➡ Running credit deduction job...");
+                creditService.deductionMonthly();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
+
+        scheduler.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
+
         System.out.println("============menu============");
         System.out.println("1. add new client");
         System.out.println("2. update info client");
@@ -56,6 +72,7 @@ public class MainMenu {
         System.out.println("9. Withdraw");
         System.out.println("10. Transfer");
         System.out.println("11. credit applications");
+
     }
 
     public void manager(){
@@ -112,6 +129,10 @@ public class MainMenu {
                         else if(Transfer == 2) this.transactionController.transferExternal();
                         else System.out.println("Invalid choice , try again");
                         break;
+                    case 11:
+                        creditController.requestCredit();
+                        break;
+
                     default:
                         System.out.println("Invalid choice ");
                         isValid = false;

@@ -4,6 +4,7 @@ import org.example.enums.AccountStatus;
 import org.example.enums.AccountType;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Random;
 
@@ -14,7 +15,7 @@ public class Account {
     private BigDecimal overdraftLimit;
     private AccountType accountType;
     private AccountStatus status;
-    private String createdAt;
+    private LocalDateTime createdAt;
     private String currency;
     private Client client;
 
@@ -22,6 +23,8 @@ public class Account {
 
     public Account() {
     }
+
+
 
     public int getId() {
         return id;
@@ -34,14 +37,12 @@ public class Account {
     public AccountType getAccountType() {
         return accountType;
     }
-    public Account(int id, String rib, BigDecimal balance, BigDecimal overdraft_limit, AccountType accountType,AccountStatus status,String createdAt) {
+    public Account(int id, String rib, BigDecimal balance, AccountType accountType,AccountStatus status) {
         this.id = id;
         this.rib = rib;
         this.balance = balance;
-        this.overdraftLimit = overdraft_limit;
         this.accountType = accountType;
         this.status = status;
-        this.createdAt = createdAt;
     }
 
     public void setAccountType(AccountType accountType) {
@@ -122,6 +123,5 @@ public class Account {
     public void withdraw(BigDecimal amount) {
         this.balance = this.balance.subtract(amount);
     }
-
 
 }
