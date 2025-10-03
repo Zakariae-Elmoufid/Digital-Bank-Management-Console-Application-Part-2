@@ -66,4 +66,9 @@ public class AccountService {
         if(amount.compareTo(account.getBalance()) < 0 ) return true;
         return true;
     }
+
+    public List<Account> ListAccountByTypeCredit(){
+        List<Account> accounts =  this.accountRepository.ListAccountByTypeCredit();
+        return accounts;
+    }
 }

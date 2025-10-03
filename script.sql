@@ -25,7 +25,6 @@ CREATE TYPE transaction_type AS ENUM (
     'DEBIT'
 );
 
--- Statut de virement (corrigé : orthographe)
 CREATE TYPE transaction_status AS ENUM ('SETTLED', 'PENDING', 'FAILED', 'CANCELLED');
 
 CREATE TYPE mode_rule AS ENUM ('FIXED', 'PERCENT');
@@ -188,4 +187,18 @@ create table banke_revenue (
 );
 
 
+create table fee_rule_credit (
+    id serial primary key ,
+    credit_type credit_type NOT NULL,
+    min_duration int,
+    max_duration int,
+    interest_rate DECIMAL(10,6) not null,
+    created_at timestamp,
+    isActive boolean DEFAULT true
+)
+
+ALTER TABLE credits
+    ADD CONSTRAINT fk_fee_rule_credit
+        FOREIGN KEY (fee_rule_credit_id)
+            REFERENCES fee_rule_credit(id);
 
