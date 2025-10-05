@@ -4,6 +4,7 @@ import org.example.models.Client;
 import org.example.models.User;
 import org.example.services.ClientService;
 import org.example.util.InputValidator;
+import org.example.util.Session;
 import org.example.views.MainMenu;
 
 import java.math.BigDecimal;
@@ -16,6 +17,27 @@ public class ClientController {
 
     private ClientService clientService ;
     private Scanner scanner = new Scanner(System.in);
+    private Session session = Session.getInstance();
+    private Integer roleId = session.getSession("role_id", Integer.class);
+
+    private void redirectByRole() {
+        Session session = Session.getInstance();
+        Integer roleId = session.getSession("role_id", Integer.class);
+
+        if (roleId == null) {
+            System.out.println("⚠ No role_id found in session. Redirect to login.");
+            return;
+        }
+
+        switch (roleId) {
+            case 1 -> new MainMenu().menuAdmin();
+            case 2 -> new MainMenu().menuTeller();
+            case 3 -> System.out.println("AUDITOR");
+            case 4 -> new MainMenu().menuManager();
+            default -> System.out.println("Unknown role, please login again.");
+        }
+    }
+
 
     public ClientController(ClientService clientService){
         this.clientService = clientService;
@@ -37,6 +59,7 @@ public class ClientController {
 
         if(client != null){
             System.out.println("Client created successfully");
+            redirectByRole();
         }else{
             System.out.println("Client not created");
         }
@@ -84,7 +107,11 @@ public class ClientController {
                 continu = InputValidator.getBoolean("would you like update author info? \ntrue. yes \nfalse. no") ;
         }while (continu);
 
-        this.clientService.updateClient(id,map);
+       boolean isUpdate = this.clientService.updateClient(id,map);
+       if(isUpdate){
+           System.out.println("Client updated successfully");
+           redirectByRole();
+       }
 
     }
 
@@ -98,6 +125,6 @@ public class ClientController {
         int id = InputValidator.getInt("Enter ID to colse");
         String  isClose =  this.clientService.closeCline(id);
         System.out.println(isClose);
-        new MainMenu().menuTeller();
+        redirectByRole();
     }
 }

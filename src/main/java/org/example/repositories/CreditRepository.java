@@ -89,7 +89,7 @@ public class CreditRepository extends BaseRepository  implements CreditInterface
                         CreditType.valueOf(rs.getString("credit_type")),
                         CreditStatus.valueOf(rs.getString("status")),
                         rs.getInt("account_id"),
-                        rs.getBigDecimal("interest_rate")
+                        rs.getBigDecimal("month_interest")
                 );
              credits.add(credit);
             }
@@ -144,6 +144,47 @@ public class CreditRepository extends BaseRepository  implements CreditInterface
           throw new RuntimeException(e);
       }
       return -1;
+    }
+
+    public List<Credit> findPendingCredits(){
+        String  query = "select * from credits where status = 'PENDING'";
+        List<Credit> credits = new ArrayList<>();
+        try(PreparedStatement stmt = conn().prepareStatement(query)){
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()){
+                Credit credit = new Credit(
+                        rs.getInt("id"),
+                        rs.getBigDecimal("amount"),
+                        rs.getInt("duration_months"),
+                        rs.getInt("remaining_duration"),
+                        rs.getBigDecimal("monthly_payment"),
+                        rs.getBigDecimal("remaining_amount"),
+                        rs.getString("justification"),
+                        CreditType.valueOf(rs.getString("credit_type")),
+                        CreditStatus.valueOf(rs.getString("status")),
+                        rs.getInt("account_id"),
+                        rs.getBigDecimal("month_interest")
+                );
+                credit.setFortypercentsalary(rs.getBigDecimal("fortypercentsalary"));
+
+                credits.add(credit);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return credits;
+    }
+
+    public boolean ActiveCredit(int id){
+        String query = "update credits set status = 'ACTIVE' where id = ?";
+        try(PreparedStatement stmt = conn().prepareStatement(query)){
+            stmt.setInt(1,id);
+            int row  = stmt.executeUpdate();
+            if(row>0) return true;
+            return false;
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 
 

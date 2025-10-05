@@ -151,6 +151,16 @@ public class CreditService {
         }
     }
 
+    public List<Credit> creditPending() {
+        List<Credit> creditPending = this.creditRepository.findPendingCredits();
+        return creditPending;
+    }
+
+    public boolean accepteCredit(int id){
+         return this.creditRepository.ActiveCredit(id);
+    }
+
+
 
 
 }

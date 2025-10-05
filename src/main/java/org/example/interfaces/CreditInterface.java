@@ -13,6 +13,8 @@ public interface CreditInterface {
     public FeeRuleCredit interestRate(CreditType creditType, int durationMonths);
     public List<Credit> findActiveCredits();
     public int AddRevenueCredit(SourceType type, BigDecimal monthlyPayment, int  creditId);
+    public List<Credit> findPendingCredits();
+    public boolean ActiveCredit(int id);
 
 
 }

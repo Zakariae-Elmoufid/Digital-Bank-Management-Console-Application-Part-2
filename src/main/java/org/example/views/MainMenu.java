@@ -4,6 +4,7 @@ import org.example.controllers.*;
 import org.example.repositories.*;
 import org.example.services.*;
 import org.example.util.InputValidator;
+import org.example.util.Session;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -48,7 +49,7 @@ public class MainMenu {
 
     public void teller(){
 
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         Runnable task = () -> {
             try {
                 System.out.println("➡ Running credit deduction job...");
@@ -58,7 +59,7 @@ public class MainMenu {
             }
         };
 
-        scheduler.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
+        //scheduler.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
 
         System.out.println("============menu============");
         System.out.println("1. add new client");
@@ -86,6 +87,8 @@ public class MainMenu {
         System.out.println("============= Welcome Teller =================");
         this.teller();
         System.out.println(". exit");
+
+
 
 
         int choice = 0;
@@ -148,10 +151,67 @@ public class MainMenu {
 
     }
 
+//        12. validte close account
+//        13. validate credit application
+//        14. validate transaction extern
+
     public void menuManager(){
-        System.out.println("============= Welcome manager =================");
+        System.out.println("============= Welcome manager ===============");
         this.teller();
         this.manager();
+
+        int choice = 0;
+        boolean isValid = false;
+        do{
+            choice = InputValidator.getInt("write what number would you like to do?");
+            isValid = true;
+            switch (choice) {
+                case 1:
+                    clientController.addClient();
+                    break;
+                case 2:
+                    clientController.updateCleint();
+                    break;
+                case 3:
+                    clientController.viewAllClients();
+                    break;
+                case 4:
+                    clientController.closeClient();
+                    break;
+                case 5:
+                    accountController.createAccount();
+                    break;
+                case 6:
+                    accountController.listAllAccount();
+                    break;
+                case 7:
+                    accountController.closeAccount();
+                    break;
+                case 8:
+                    transactionController.deposit();
+                    break;
+                case 9:
+                    transactionController.withdraw();
+                    break;
+                case 10:
+                    int Transfer = InputValidator.getInt("would you like to transfer.\n1. Intern. \n2. external");
+                    if(Transfer == 1) this.transactionController.transferIntern();
+                    else if(Transfer == 2) this.transactionController.transferExternal();
+                    else System.out.println("Invalid choice , try again");
+                    break;
+                case 11:
+                    creditController.requestCredit();
+                    break;
+            case 12:
+                accountController.validateCloseAccount();
+                break;
+            case 13:
+                creditController.validateCredit();
+                break;
+            }
+        }
+        while(!isValid);
+
 
     }
 
@@ -172,6 +232,42 @@ public class MainMenu {
             choice = InputValidator.getInt("write what number would you like to do?");
             isValid = true;
             switch (choice) {
+                case 1:
+                    clientController.addClient();
+                    break;
+                case 2:
+                    clientController.updateCleint();
+                    break;
+                case 3:
+                    clientController.viewAllClients();
+                    break;
+                case 4:
+                    clientController.closeClient();
+                    break;
+                case 5:
+                    accountController.createAccount();
+                    break;
+                case 6:
+                    accountController.listAllAccount();
+                    break;
+                case 7:
+                    accountController.closeAccount();
+                    break;
+                case 8:
+                    transactionController.deposit();
+                    break;
+                case 9:
+                    transactionController.withdraw();
+                    break;
+                case 10:
+                    int Transfer = InputValidator.getInt("would you like to transfer.\n1. Intern. \n2. external");
+                    if(Transfer == 1) this.transactionController.transferIntern();
+                    else if(Transfer == 2) this.transactionController.transferExternal();
+                    else System.out.println("Invalid choice , try again");
+                    break;
+                case 11:
+                    creditController.requestCredit();
+                    break;
                 case 15:
                     this.feeruleController.addFeeRule();
                     break;
@@ -186,7 +282,7 @@ public class MainMenu {
                     break;
                 case 19:
                     this.feeruleController.deactivateFeeRule();
-
+                    break;
                 default:
                     System.out.println("Invalid choice ");
                     isValid = false;

@@ -20,6 +20,16 @@ public class Credit {
     private BigDecimal monthlyInterest;
     private int accountId;
 
+    public BigDecimal getFortypercentsalary() {
+        return fortypercentsalary;
+    }
+
+    public void setFortypercentsalary(BigDecimal fortypercentsalary) {
+        this.fortypercentsalary = fortypercentsalary;
+    }
+
+    private  BigDecimal fortypercentsalary;
+
     public Credit(int id, BigDecimal amount, int months, int remaining_months, BigDecimal monthlyPayment, BigDecimal remainingAmount, String justification, CreditType creditType, CreditStatus creditStatus, int accountId, BigDecimal monthInterest) {
         this.id = id;
         this.amount = amount;
@@ -131,7 +141,22 @@ public class Credit {
         this.creditStatus = creditStatus;
     }
 
-
-
-
+    @Override
+    public String toString() {
+        return "Credit{" +
+                "id=" + id +
+                ", amount=" + amount +
+                ", months=" + months +
+                ", remaining_months=" + remaining_months +
+                ", monthlyPayment=" + monthlyPayment +
+                ", remainingAmount=" + remainingAmount +
+                ", justification='" + justification + '\'' +
+                ", creditType=" + creditType +
+                ", creditStatus=" + creditStatus +
+                ", approvatedAt=" + approvatedAt +
+                ", monthlyInterest=" + monthlyInterest +
+                ", accountId=" + accountId +
+                ", fortypercentsalary=" + fortypercentsalary +
+                '}';
+    }
 }

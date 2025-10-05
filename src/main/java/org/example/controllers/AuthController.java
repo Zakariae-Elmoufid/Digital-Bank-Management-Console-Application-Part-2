@@ -61,7 +61,8 @@ public class AuthController {
                            System.out.println("AUDITOR");
                            break;
                        case 4:
-                           System.out.println("Manager");
+                           System.out.println("MANAGER");
+                           mainMenu.menuManager();
                            break;
                    }
            }else{
