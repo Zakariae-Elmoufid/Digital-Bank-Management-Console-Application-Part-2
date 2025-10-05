@@ -8,6 +8,7 @@ import org.example.repositories.TransactionRepository;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -59,6 +60,10 @@ public class TransactionServices {
             int bankRevenue = transactionRepository.AddRevenueTransaction(SourceType.EXTERNAL_TRANSFER,feeAmount,transaction_id);
             return true;
         }else return false;
+    }
+
+    public List<Transaction> historic(){
+        return transactionRepository.getAll();
     }
 
 

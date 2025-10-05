@@ -1,6 +1,9 @@
 package org.example.repositories;
 
+import org.example.enums.CurrencyType;
 import org.example.enums.SourceType;
+import org.example.enums.TransactionStatus;
+import org.example.enums.TransactionType;
 import org.example.interfaces.TransactionInterface;
 import org.example.models.Account;
 import org.example.models.BankRevenue;
@@ -12,6 +15,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.example.enums.CurrencyType.MAD;
 import static org.example.enums.TransactionStatus.SETTLED;
@@ -193,6 +198,41 @@ public class TransactionRepository extends BaseRepository implements Transaction
             e.printStackTrace();
          }
         return -1;
+    }
+
+    public List<Transaction> getAll(){
+        String query = "select t.id , t.amount , t.created_at , t.type , t.currency , t.status, t.description ," +
+                "from_a.rib as from_rib , to_a.rib as to_rib" +
+                " from transactions t " +
+                "inner join accounts  from_a on transfer_out_id  =  from_a.id " +
+                "inner join accounts to_a on transfer_in_id = to_a.id";
+        List<Transaction> transactions = new ArrayList<>();
+        try(Statement stmt = conn().createStatement();
+            ResultSet rs =  stmt.executeQuery(query)){
+            while (rs.next()){
+                Account fromAccount = new Account();
+                Account toAccount = new Account();
+                fromAccount.setRib(rs.getString("from_rib"));
+                toAccount.setRib(rs.getString("to_rib"));
+
+                Transaction t = new Transaction(
+                        TransactionType.valueOf(rs.getString("type")),
+                        rs.getBigDecimal("amount"),
+                         toAccount ,
+                         fromAccount,
+                        CurrencyType.valueOf(rs.getString("currency")),
+                        TransactionStatus.valueOf(rs.getString("status")),
+                        rs.getString("description"),
+                        rs.getTimestamp("created_at").toLocalDateTime()
+                );
+                transactions.add(t);
+            }
+
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return transactions;
     }
 
 
