@@ -2,6 +2,7 @@ package org.example.controllers;
 
 import org.example.enums.CreditType;
 import org.example.models.Account;
+import org.example.models.BankRevenue;
 import org.example.models.Client;
 import org.example.models.Credit;
 import org.example.services.AccountService;
@@ -99,6 +100,11 @@ public class CreditController {
             System.out.println("accept credit successfully");
             redirectByRole();
         }else System.out.println("accept credit failed");
+    }
+
+    public void revenue(){
+        List<BankRevenue> revenues = creditService.revenue();
+        revenues.stream().forEach(System.out::println);
     }
 
 

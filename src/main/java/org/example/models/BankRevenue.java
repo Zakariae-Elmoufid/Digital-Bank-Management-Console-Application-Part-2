@@ -19,6 +19,13 @@ public class BankRevenue {
         this.amount = amount;
         this.currency = currency;
     }
+    public BankRevenue(int id, SourceType source, BigDecimal amount, CurrencyType currency ,  LocalDateTime OccurredAt) {
+        this.id = id;
+        this.source = source;
+        this.amount = amount;
+        this.currency = currency;
+        this.OccurredAt = OccurredAt;
+    }
 
     public BankRevenue(Integer o, String name, BigDecimal feeAmount, CurrencyType currencyType) {
     }
@@ -61,5 +68,16 @@ public class BankRevenue {
 
     public void setCurrency(CurrencyType currency) {
         this.currency = currency;
+    }
+
+    @Override
+    public String toString() {
+        return "BankRevenue{" +
+                "id=" + id +
+                ", source=" + source +
+                ", amount=" + amount +
+                ", currency=" + currency +
+                ", OccurredAt=" + OccurredAt +
+                '}';
     }
 }

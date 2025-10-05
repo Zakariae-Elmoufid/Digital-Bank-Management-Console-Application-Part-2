@@ -5,6 +5,7 @@ import org.example.interfaces.TransactionInterface;
 import org.example.models.Account;
 import org.example.models.Client;
 import org.example.models.FeeRule;
+import org.example.models.Transaction;
 import org.example.repositories.TransactionRepository;
 import org.example.services.AccountService;
 import org.example.services.ClientService;
@@ -187,6 +188,16 @@ public class TransactionController {
             }else {
                 System.out.println("No more accounts found");
             }
+        }
+        redirectByRole();
+    }
+
+    public void historicTransaction(){
+        List<Transaction> transactions = transactionService.historic();
+        if(transactions.size() > 0 && transactions != null ){
+            transactions.forEach(transaction -> {
+                System.out.println(transaction);
+            });
         }
         redirectByRole();
     }

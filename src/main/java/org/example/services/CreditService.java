@@ -4,6 +4,7 @@ import org.example.enums.CreditStatus;
 import org.example.enums.CreditType;
 import org.example.enums.SourceType;
 import org.example.models.Account;
+import org.example.models.BankRevenue;
 import org.example.models.Credit;
 import org.example.models.FeeRuleCredit;
 import org.example.repositories.AccountRepository;
@@ -41,6 +42,11 @@ public class CreditService {
         BigDecimal monthlyInterest = result.get("monthInterest");
 
 
+         boolean isHaveCreditLate = this.creditRepository.creditLateById(account_id);
+         if(isHaveCreditLate){
+             System.out.println("Credit Late is Have Credit Late");
+             return false;
+         }
 
         BigDecimal fortyPercentSalary = salary.multiply(new BigDecimal("0.40"));
         boolean eligible = monthlyPayment.compareTo(fortyPercentSalary) <= 0;
@@ -132,7 +138,6 @@ public class CreditService {
                     ? CreditStatus.CLOSED
                     : CreditStatus.ACTIVE;
 
-            // Mise à jour du crédit
             creditRepository.updateCreditAfterPayment(
                     credit.getId(),
                     newRemaining,
@@ -160,6 +165,9 @@ public class CreditService {
          return this.creditRepository.ActiveCredit(id);
     }
 
+    public List<BankRevenue> revenue() {
+        return  creditRepository.getAllRevenue();
+    }
 
 
 
