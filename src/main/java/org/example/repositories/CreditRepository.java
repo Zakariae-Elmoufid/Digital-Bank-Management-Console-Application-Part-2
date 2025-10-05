@@ -2,8 +2,10 @@ package org.example.repositories;
 
 import org.example.enums.CreditStatus;
 import org.example.enums.CreditType;
+import org.example.enums.CurrencyType;
 import org.example.enums.SourceType;
 import org.example.interfaces.CreditInterface;
+import org.example.models.BankRevenue;
 import org.example.models.Credit;
 import org.example.models.FeeRuleCredit;
 import org.postgresql.PGConnection;
@@ -13,6 +15,7 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +73,7 @@ public class CreditRepository extends BaseRepository  implements CreditInterface
     public List<Credit> findActiveCredits(){
         String query = "SELECT c.id as credit_id , c.amount ,c.duration_months , c.monthly_payment," +
                 " c.remaining_amount,c.justification,c.credit_type,c.status ,c.account_id,c.approved_at," +
-                " c.remaining_duration,fr.interest_rate ,c.account_id " +
+                " c.remaining_duration,fr.interest_rate ,c.account_id , c.month_interest " +
                 "from credits c " +
                 "inner join  fee_rule_credit fr on c.fee_rule_credit_id  = fr.id  " +
                 "where c.status = 'ACTIVE' ";
@@ -186,6 +189,43 @@ public class CreditRepository extends BaseRepository  implements CreditInterface
             throw new RuntimeException(e);
         }
     }
+
+    public boolean creditLateById(int id){
+        String query = "select * from credits where id = ? and status = 'LATE'";
+        try(PreparedStatement stmt = conn().prepareStatement(query)){
+            stmt.setInt(1,id);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()) return false;
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+            return true;
+    }
+
+
+    public List<BankRevenue> getAllRevenue(){
+        String query = "select * from banke_revenue ";
+        List<BankRevenue> revenues = new ArrayList<>();
+        try(Statement stmt = conn().createStatement();
+            ResultSet rs = stmt.executeQuery(query)){
+                
+           while (rs.next()){
+               BankRevenue br = new BankRevenue(
+                       rs.getInt("id"),
+                       SourceType.valueOf(rs.getString("source_type")),
+                       rs.getBigDecimal("revenue"),
+                       CurrencyType.valueOf(rs.getString("currency")),
+                       rs.getTimestamp("occurred_at").toLocalDateTime()
+               );
+               revenues.add(br);
+           }
+           return revenues;
+        }catch (SQLException e){
+                throw new RuntimeException(e);
+        }
+    }
+
+
 
 
 

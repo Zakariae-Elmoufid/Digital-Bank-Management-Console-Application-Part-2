@@ -2,6 +2,7 @@ package org.example.interfaces;
 
 import org.example.enums.CreditType;
 import org.example.enums.SourceType;
+import org.example.models.BankRevenue;
 import org.example.models.Credit;
 import org.example.models.FeeRuleCredit;
 
@@ -15,6 +16,8 @@ public interface CreditInterface {
     public int AddRevenueCredit(SourceType type, BigDecimal monthlyPayment, int  creditId);
     public List<Credit> findPendingCredits();
     public boolean ActiveCredit(int id);
+    public boolean creditLateById(int id);
+    public List<BankRevenue> getAllRevenue();
 
 
 }

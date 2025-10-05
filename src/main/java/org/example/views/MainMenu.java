@@ -49,7 +49,7 @@ public class MainMenu {
 
     public void teller(){
 
-            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         Runnable task = () -> {
             try {
                 System.out.println("➡ Running credit deduction job...");
@@ -59,7 +59,7 @@ public class MainMenu {
             }
         };
 
-        //scheduler.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
 
         System.out.println("============menu============");
         System.out.println("1. add new client");
@@ -230,6 +230,7 @@ public class MainMenu {
         System.out.println("17. Update fee rules.");
         System.out.println("18. Activate fee rules.");
         System.out.println("19. Deactivate fee rules.");
+        System.out.println("20. getRevenue");
 
         int choice = 0;
         boolean isValid = false;
@@ -288,6 +289,8 @@ public class MainMenu {
                 case 19:
                     this.feeruleController.deactivateFeeRule();
                     break;
+                case 20:
+                    this.creditController.revenue();
                 default:
                     System.out.println("Invalid choice ");
                     isValid = false;
