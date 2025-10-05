@@ -20,8 +20,12 @@ public class  Session {
           session.put(key, value);
     }
 
-    public <T>  T getSession(String key ){
-        return (T)session.get(key);
+    public <T>  T getSession(String key , Class<T> type){
+        Object value = session.get(key);
+        if (type.isInstance(value)) {
+            return type.cast(value);
+        }
+        return null;
     }
 
     public void removeSession(String key) {

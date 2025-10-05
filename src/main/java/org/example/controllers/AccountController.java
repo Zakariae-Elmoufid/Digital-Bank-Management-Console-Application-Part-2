@@ -6,6 +6,7 @@ import org.example.models.Client;
 import org.example.services.AccountService;
 import org.example.services.ClientService;
 import org.example.util.InputValidator;
+import org.example.util.Session;
 import org.example.views.MainMenu;
 
 import java.math.BigDecimal;
@@ -16,6 +17,27 @@ public class AccountController {
 
     private AccountService accountService;
     private  ClientService clientService;
+
+
+
+    private void redirectByRole() {
+        Session session = Session.getInstance();
+        Integer roleId = session.getSession("role_id", Integer.class);
+
+        if (roleId == null) {
+            System.out.println("⚠ No role_id found in session. Redirect to login.");
+            return;
+        }
+
+        switch (roleId) {
+            case 1 -> new MainMenu().menuAdmin();
+            case 2 -> new MainMenu().menuTeller();
+            case 3 -> System.out.println("AUDITOR");
+            case 4 -> new MainMenu().menuManager();
+            default -> System.out.println("Unknown role, please login again.");
+        }
+    }
+
 
 
     public AccountController(AccountService accountService, ClientService clientService) {
@@ -56,7 +78,7 @@ public class AccountController {
                 );
 
                 if (retryChoice == 0) {
-                    new MainMenu().menuTeller();
+                    redirectByRole();
                 }
             }
         }while (canCreate );
@@ -65,8 +87,8 @@ public class AccountController {
         Account account = this.accountService.createAccount(id, type, balance);
         if (account != null) {
             System.out.println("Account  created");
-            new MainMenu().menuTeller();
-        } else {
+            redirectByRole();
+                   } else {
             System.out.println("Account not created");
         }
     }
@@ -83,13 +105,14 @@ public class AccountController {
                 System.out.println("   -> " + account.getRib() + " | Balance: " + account.getBalance()+"  |  Type Account: " + account.getAccountType());
             }
         }
-        new MainMenu().menuTeller();
+        redirectByRole();
+
+
 
     }
 
     public void closeAccount(){
         List<Account> accounts =  this.accountService.listAllAccount();
-
         Map<Client, List<Account>> groupedByClient = accounts.stream().collect(Collectors.groupingBy(Account::getClient));
 
         for(Map.Entry<Client, List<Account>> entry : groupedByClient.entrySet()){
@@ -102,7 +125,23 @@ public class AccountController {
         String rib = InputValidator.getString("Choose Rib Account  that you want to close");
         String resultMessage= this.accountService.closeAccount(rib);
         System.out.println(resultMessage);
-        new MainMenu().menuTeller();
+        redirectByRole();
+    }
+
+    public void validateCloseAccount(){
+       List<Account> accounts =  accountService.getAccountPendingClosure();
+       if(accounts.isEmpty()){
+           System.out.println("There is no account to close");
+           redirectByRole();
+       }
+       accounts.stream().forEach(System.out::println);
+       int id = InputValidator.getInt("Choose account ID that you want to validate  close");
+       boolean isClose =   accountService.validatClose(id);
+       if(isClose) {
+           System.out.println("Account closed");
+           redirectByRole();
+       }
+       else System.out.println("Account not closed");
     }
 
 }

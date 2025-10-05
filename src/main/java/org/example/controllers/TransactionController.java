@@ -11,6 +11,7 @@ import org.example.services.ClientService;
 import org.example.services.FeeruleService;
 import org.example.services.TransactionServices;
 import org.example.util.InputValidator;
+import org.example.util.Session;
 import org.example.views.MainMenu;
 
 import java.math.BigDecimal;
@@ -36,6 +37,25 @@ public class TransactionController {
     }
 
 
+    private void redirectByRole() {
+        Session session = Session.getInstance();
+        Integer roleId = session.getSession("role_id", Integer.class);
+
+        if (roleId == null) {
+            System.out.println("⚠ No role_id found in session. Redirect to login.");
+            return;
+        }
+
+        switch (roleId) {
+            case 1 -> new MainMenu().menuAdmin();
+            case 2 -> new MainMenu().menuTeller();
+            case 3 -> System.out.println("AUDITOR");
+            case 4 -> new MainMenu().menuManager();
+            default -> System.out.println("Unknown role, please login again.");
+        }
+    }
+
+
     public void deposit() {
         List<Account> accounts = this.accountService.listAllAccount();
         Map<Client, List<Account>> groupedByClient = accounts.stream().collect(Collectors.groupingBy(Account::getClient));
@@ -54,6 +74,7 @@ public class TransactionController {
             boolean isdiposit = this.transactionService.deposit(amount,account);
              if(isdiposit){
                  System.out.println("Deposited successfully");
+                 redirectByRole();
              }else{
                  System.out.println("Deposited failed");
              }
@@ -86,7 +107,7 @@ public class TransactionController {
                 System.out.println(isWithdraw);
             }
         }while (account == null || isWithdraw == null);
-        new MainMenu().menuTeller();
+        redirectByRole();
     }
 
     public void transferIntern(){
@@ -122,7 +143,7 @@ public class TransactionController {
                     }
                     }
             }
-        new MainMenu().menuTeller();
+        redirectByRole();
 
 
     }
@@ -167,7 +188,7 @@ public class TransactionController {
                 System.out.println("No more accounts found");
             }
         }
-        new MainMenu().menuTeller();
+        redirectByRole();
     }
 
 }

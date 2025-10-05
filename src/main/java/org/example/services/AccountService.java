@@ -71,4 +71,11 @@ public class AccountService {
         List<Account> accounts =  this.accountRepository.ListAccountByTypeCredit();
         return accounts;
     }
+
+    public List<Account> getAccountPendingClosure(){
+        return this.accountRepository.getAccountPendingClosure();
+    }
+    public boolean validatClose(int id){
+       return  this.accountRepository.validateClose(id);
+    }
 }

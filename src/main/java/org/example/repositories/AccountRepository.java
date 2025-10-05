@@ -118,6 +118,28 @@ public class AccountRepository extends  BaseRepository implements AccountInterfa
         }
     }
 
+    public List<Account> getAccountPendingClosure(){
+        String query = "select * from accounts where status = 'PENDING_CLOSURE'";
+        List<Account> accounts = new ArrayList<>();
+        try(PreparedStatement stmt = conn().prepareStatement(query)){
+           ResultSet rs = stmt.executeQuery();
+           while(rs.next()){
+               Account account = new Account();
+               account.setRib(rs.getString("rib"));
+               account.setId(rs.getInt("id"));
+               account.setBalance(rs.getBigDecimal("balance"));
+               account.setOverdraftLimit(rs.getBigDecimal("overdraft_limit"));
+               account.setCurrency(rs.getString("currency"));
+               account.setStatus(AccountStatus.valueOf(rs.getString("status")));
+               account.setAccountType(AccountType.valueOf(rs.getString("account_type")));
+               accounts.add(account);
+           }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return   accounts;
+    }
+
     public boolean deposit(BigDecimal amount , Account account){
         account.deposit(amount);
         String query = "update accounts set  balance = ? where rib = ?";
@@ -191,12 +213,26 @@ public class AccountRepository extends  BaseRepository implements AccountInterfa
             stmt.setInt(1,id);
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
-                return new Account(rs.getInt("id"),rs.getString("rib"),rs.getBigDecimal("balance"),AccountType.valueOf(rs.getString("account_type")),AccountStatus.valueOf(rs.getString("status")));
+                return new Account(rs.getInt("id"),rs.getString("rib"),rs.getBigDecimal("balance"),
+                        AccountType.valueOf(rs.getString("account_type")),
+                        AccountStatus.valueOf(rs.getString("status")));
             }
         }catch (SQLException e){
             e.printStackTrace();
         }
         return null;
+    }
+
+    public boolean  validateClose(int id){
+        String query = "update accounts set  status = 'CLOSED' where id = ?";
+        try(PreparedStatement stmt = conn().prepareStatement(query)){
+            stmt.setInt(1,id);
+            int row = stmt.executeUpdate();
+            return row > 0;
+        }catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
 
