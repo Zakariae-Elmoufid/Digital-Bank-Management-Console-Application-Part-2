@@ -1,8 +1,9 @@
-CREATE TYPE role_enum AS ENUM ('ADMIN', 'AUDITOR', 'MANAGER', 'TELLER', 'CLIENT');
+CREATE TYPE role_enum AS ENUM ('ADMIN', 'AUDITOR', 'MANAGER', 'TELLER');
 
 -- Type de compte (corrigé : noms standards)
 CREATE TYPE account_type AS ENUM ('CREDIT', 'CURRENT', 'SAVINGS');
 
+CREATE TYPE account_status AS ENUM ('ACTIVE', 'PENDING_CLOSURE', 'CLOSED');
 
 CREATE TYPE operation_type AS ENUM (
     'DEPOSIT',
@@ -24,7 +25,6 @@ CREATE TYPE transaction_type AS ENUM (
     'DEBIT'
 );
 
--- Statut de virement (corrigé : orthographe)
 CREATE TYPE transaction_status AS ENUM ('SETTLED', 'PENDING', 'FAILED', 'CANCELLED');
 
 CREATE TYPE mode_rule AS ENUM ('FIXED', 'PERCENT');
@@ -37,7 +37,7 @@ CREATE TYPE credit_status AS ENUM ('PENDING', 'ACTIVE', 'LATE', 'CLOSED', 'REJEC
 
 -- Type de devise
 CREATE TYPE currency_type AS ENUM ('MAD', 'EUR', 'USD');
-
+create type client_status as enum ('ACTIVE','CLOSED', 'PENDING_CLOSURE');
 
 CREATE TABLE roles (
                        id SERIAL PRIMARY KEY,
@@ -55,80 +55,63 @@ CREATE TABLE users (
                        username VARCHAR(255) NOT NULL UNIQUE,
                        email VARCHAR(255) NOT NULL UNIQUE,
                        password VARCHAR(255) NOT NULL,
-                       phone VARCHAR(20),
-                       role_id INTEGER NOT NULL, -- Correction : ajout de la colonne manquante
+                       role_id INTEGER NOT NULL,
                        is_active BOOLEAN DEFAULT true,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    -- Clé étrangère corrigée
                        FOREIGN KEY (role_id) REFERENCES roles(id)
     );
 
 
 CREATE TABLE clients (
                          id SERIAL PRIMARY KEY,
-                         salary DECIMAL(15,2), -- Correction : DECIMAL au lieu de BigDecimal
-                         monthly_income DECIMAL(15,2),
-                         profession VARCHAR(200),
-                         cin VARCHAR(20), -- Carte d'identité nationale
+                         first_name varchar(50),
+                         last_name varchar(50),
+                         salary DECIMAL(15,2),
+                         cin VARCHAR(20),
+                         status client_status default 'ACTIVE',
                          address TEXT,
-                         user_id INTEGER NOT NULL UNIQUE, -- Correction : nom de table
-
-    -- Clé étrangère corrigée
-                         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-
-
-);
+                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ;
 
 CREATE TABLE accounts (
                           id SERIAL PRIMARY KEY,
                           account_number VARCHAR(20) UNIQUE NOT NULL,
-                          balance DECIMAL(15,2) NOT NULL DEFAULT 0.00, -- Correction : DECIMAL au lieu de float
+                          balance DECIMAL(15,2) NOT NULL DEFAULT 0.00,
                           overdraft_limit DECIMAL(15,2) DEFAULT 0.00,
                           currency currency_type DEFAULT 'MAD',
-                          is_active BOOLEAN DEFAULT true, -- Correction : nom de colonne
-                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Correction : nom de colonne
+                          status account_status default  'ACTIVE',
+                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                           closed_at TIMESTAMP,
                           type account_type NOT NULL,
-                          client_id INTEGER NOT NULL, -- Correction : référence vers clients
-
-    -- Clé étrangère corrigée
-                          FOREIGN KEY (client_id) REFERENCES clients(id),
+                          client_id INTEGER NOT NULL,
+                          FOREIGN KEY (client_id) REFERENCES clients(id)
 
     );
-
-- TABLE DES TRANSACTIONS
--- =============================================
 
 CREATE TABLE transactions (
                               id SERIAL PRIMARY KEY,
-                              transaction_id VARCHAR(50) UNIQUE NOT NULL,
-                              amount DECIMAL(15,2) NOT NULL, -- Correction : DECIMAL au lieu de float
+                              amount DECIMAL(15,2) NOT NULL,
                               currency currency_type DEFAULT 'MAD',
                               description TEXT,
-                              source_account_id INTEGER, -- Correction : nom plus clair
-                              target_account_id INTEGER, -- Correction : nom plus clair
-                              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Correction : nom de colonne
+                              transfer_out_id INTEGER,
+                              transfer_in_id INTEGER,
+                              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                               settled_at TIMESTAMP,
                               type transaction_type NOT NULL,
-                              status transaction_status NOT NULL DEFAULT 'PENDING', -- Correction : ajout de virgule
-                              executed_by INTEGER,
+                              status transaction_status NOT NULL DEFAULT 'PENDING',
+                              fee_rule_id integer,
                               fee_amount DECIMAL(15,2) DEFAULT 0.00,
-
-    -- Clés étrangères corrigées
-                              FOREIGN KEY (source_account_id) REFERENCES accounts(id),
-                              FOREIGN KEY (target_account_id) REFERENCES accounts(id),
-                              FOREIGN KEY (executed_by) REFERENCES users(id),
-
-
+                              FOREIGN KEY (transfer_out_id) REFERENCES accounts(id),
+                              FOREIGN KEY (transfer_in_id) REFERENCES accounts(id),
+                              FOREIGN KEY (fee_rule_id) REFERENCES  fee_rules(id)
     );
-CREATE TABLE fee_rules ( -- Correction : nom de table
+CREATE TABLE fee_rules (
                            id SERIAL PRIMARY KEY,
-                           operation_type operation_type NOT NULL, -- Correction : nom de colonne
-                           mode mode_rule NOT NULL, -- Correction : nom de colonne
-                           value DECIMAL(10,4) NOT NULL, -- Correction : DECIMAL au lieu de float
-                           currency currency_type DEFAULT 'MAD', -- Correction : type de données
-                           is_active BOOLEAN DEFAULT true, -- Correction : nom de colonne
+                           operation_type operation_type NOT NULL,
+                           mode mode_rule NOT NULL,
+                           value DECIMAL(10,4) NOT NULL,
+                           currency currency_type DEFAULT 'MAD',
+                           is_active BOOLEAN DEFAULT true,
                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -137,13 +120,12 @@ CREATE TABLE fee_rules ( -- Correction : nom de table
 
 CREATE TABLE credits (
                          id SERIAL PRIMARY KEY,
-                         credit_number VARCHAR(30) UNIQUE NOT NULL,
                          amount DECIMAL(15,2) NOT NULL, -- Correction : DECIMAL au lieu de float
                          duration_months INTEGER NOT NULL, -- Correction : nom en anglais
                          interest_rate DECIMAL(5,4) NOT NULL, -- Correction : nom en anglais et type
                          monthly_payment DECIMAL(15,2),
                          remaining_amount DECIMAL(15,2),
-                         fee_rule_id INTEGER, -- Correction : nom de colonne
+                         fee_rule_id INTEGER,
                          justification TEXT,
                          credit_type credit_type NOT NULL, -- Correction : nom de colonne
                          status credit_status DEFAULT 'PENDING', -- Correction : nom de colonne
@@ -152,12 +134,9 @@ CREATE TABLE credits (
                          approved_at TIMESTAMP,
                          approved_by INTEGER,
                          next_payment_date DATE,
-
-    -- Clés étrangères
                          FOREIGN KEY (account_id) REFERENCES accounts(id),
                          FOREIGN KEY (fee_rule_id) REFERENCES fee_rules(id),
                          FOREIGN KEY (approved_by) REFERENCES users(id),
-
 
 );
 
@@ -167,7 +146,6 @@ CREATE TABLE credit_payments
 (
     id               SERIAL PRIMARY KEY,
     credit_id        INTEGER        NOT NULL,
-    payment_number   INTEGER        NOT NULL,
     principal_amount DECIMAL(15, 2) NOT NULL,
     interest_amount  DECIMAL(15, 2) NOT NULL,
     penalty_amount   DECIMAL(15, 2)     DEFAULT 0.00,
@@ -176,8 +154,6 @@ CREATE TABLE credit_payments
     paid_date        DATE,
     status           transaction_status DEFAULT 'PENDING',
     transaction_id   INTEGER,
-
-    -- Clés étrangères
     FOREIGN KEY (credit_id) REFERENCES credits (id) ON DELETE CASCADE,
     FOREIGN KEY (transaction_id) REFERENCES transactions (id)
 );
@@ -193,12 +169,36 @@ CREATE TABLE exchange_rates
     updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_active     BOOLEAN   DEFAULT true,
     updated_by    INTEGER,
-
-    -- Clé étrangère
     FOREIGN KEY (updated_by) REFERENCES users (id)
 );
 
+CREATE TYPE source_type AS ENUM ('EXTERNAL_TRANSFER', 'PENALTY', 'FOREING_WITHDRAW','INTERE');
+
+create table banke_revenue (
+    id serial primary key ,
+    source_type source_type,
+    amount DECIMAL(10,6) not null,
+    currency currency_type default  'MAD',
+    occurred_at timestamp default  current_timestamp,
+    credit_payments_id int,
+    transaction_id int ,
+    foreign key credit_payments_id references credit_payments(id),
+    foreign key transaction_id references transactions(id)
+);
 
 
+create table fee_rule_credit (
+    id serial primary key ,
+    credit_type credit_type NOT NULL,
+    min_duration int,
+    max_duration int,
+    interest_rate DECIMAL(10,6) not null,
+    created_at timestamp,
+    isActive boolean DEFAULT true
+)
 
-/
+ALTER TABLE credits
+    ADD CONSTRAINT fk_fee_rule_credit
+        FOREIGN KEY (fee_rule_credit_id)
+            REFERENCES fee_rule_credit(id);
+
